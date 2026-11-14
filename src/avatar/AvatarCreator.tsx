@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { useT } from '../i18n'
 import { Astronaut } from './Astronaut'
+import { Icon } from '../game/icons'
 import './avatar.css'
 import {
   AVATAR_CATEGORIES, AVATAR_OPTIONS, DEFAULT_AVATAR, GLOVE_COLORS, HAIR_COLORS, NAME_MAX, SKIN_TONES,
@@ -110,7 +111,7 @@ export function AvatarCreator({ onDone, onBack, initial, onChange, transparent }
     <div className={`av-creator${transparent ? ' av-creator--overlay' : ''}`}>
       <header className={`av-head${onBack ? ' av-head--back' : ''}`}>
         {onBack && (
-          <button type="button" className="btn btn--metal av-back" onClick={onBack}>‹ {t('avatar.back')}</button>
+          <button type="button" className="btn btn--metal av-back" onClick={onBack}><Icon name="go" size={18} className="av-flip" /> {t('avatar.back')}</button>
         )}
         <h1 className="title">{t('avatar.title')}</h1>
       </header>
@@ -123,7 +124,7 @@ export function AvatarCreator({ onDone, onBack, initial, onChange, transparent }
             </div>
           </div>
           <div className="av-name">
-            <label htmlFor={`${uid}-name`}>{t('avatar.name.label')}</label>
+            <label className="label" htmlFor={`${uid}-name`}>{t('avatar.name.label')}</label>
             <input
               id={`${uid}-name`}
               type="text"

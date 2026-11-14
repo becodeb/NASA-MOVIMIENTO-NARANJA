@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { game, useGame } from '../../game/store'
 import { useT } from '../../i18n'
-import { Explain, ScreenFrame } from '../../game/ui'
+import { Explain, ScreenFrame, Squiggle } from '../../game/ui'
+import { Icon, type IconName } from '../../game/icons'
 import { COMPONENTS, LOADS, PARAMS } from '../../engine/data'
 import { createMission, designReport, launch } from '../../engine/engine'
 import type { CheckResult, ShipConfig } from '../../engine/types'
@@ -19,10 +20,10 @@ const CHOICES: { [K in Part]: readonly ShipConfig[K][] } = {
   lifeSupport: ['consumables', 'regenerative'],
   comms: ['standard', 'redundant'],
 }
-const ICON: Record<Part, string> = { structure: '🛡️', propulsion: '🚀', power: '⚡', lifeSupport: '🫁', comms: '📡' }
-const OPT_ICON: Record<string, string> = {
-  light: '🪶', reinforced: '🧱', chemical: '🔥', combined: '⚡', solar: '☀️', nuclear: '⚛️',
-  consumables: '🛢️', regenerative: '♻️', standard: '📡', redundant: '📡📡',
+const ICON: Record<Part, IconName> = { structure: 'hull', propulsion: 'maneuver', power: 'power', lifeSupport: 'life-support', comms: 'antenna' }
+const OPT_ICON: Record<string, IconName> = {
+  light: 'frame-light', reinforced: 'frame-whipple', chemical: 'engine-chemical', combined: 'engine-combined', solar: 'solar-array', nuclear: 'reactor',
+  consumables: 'tank', regenerative: 'recycle', standard: 'antenna', redundant: 'antenna-twin',
 }
 
 type Stats = Record<string, number | boolean>
@@ -74,17 +75,17 @@ function useTween(target: number, ms = 500) {
 type Tone = 'ok' | 'warn' | 'bad' | 'idle'
 
 function StMeter({ label, icon, value, max, marker, tone, sub, markerLabel }: {
-  label: string; icon: string; value: number | null; max: number; marker?: number; tone: Tone; sub?: string; markerLabel?: string
+  label: string; icon: IconName; value: number | null; max: number; marker?: number; tone: Tone; sub?: string; markerLabel?: string
 }) {
   const shown = useTween(value ?? 0)
   const pct = Math.max(0, Math.min(100, (shown / max) * 100))
-  const text = value === null ? '—' : Number.isInteger(value) ? Math.round(shown) : shown.toFixed(1)
+  const text = value === null ? '–' : Number.isInteger(value) ? Math.round(shown) : shown.toFixed(1)
   return (
     <div className={`st-m st-m--${value === null ? 'idle' : tone}`}>
       <div className="st-m__top">
-        <span aria-hidden>{icon}</span>
+        <Icon name={icon} size={26} />
         <span className="st-m__label">{label}</span>
-        <b className="st-m__val">{text}</b>
+        <b className="st-m__val tnum">{text}</b>
       </div>
       <div className="st-m__track" role="meter" aria-label={label} aria-valuenow={value ?? 0} aria-valuemin={0} aria-valuemax={max}>
         <div className="st-m__fill" style={{ width: `${pct}%` }} />
@@ -214,16 +215,16 @@ export function Level1() {
 
   const meters = (
     <>
-      <StMeter icon="💰" label={t('st.l1.m.budget')} value={v.cost} max={Math.round(PARAMS.budget * 1.25)} marker={PARAMS.budget}
+      <StMeter icon="budget" label={t('st.l1.m.budget')} value={v.cost} max={Math.round(PARAMS.budget * 1.25)} marker={PARAMS.budget}
         markerLabel={t('st.l1.m.limit', { n: PARAMS.budget })} tone={budgetTone} sub={`${v.cost} / ${PARAMS.budget}`} />
-      <StMeter icon="⚖️" label={t('st.l1.m.mass')} value={v.mass} max={Math.round(PARAMS.launchMass * 1.25)} marker={PARAMS.launchMass}
+      <StMeter icon="mass" label={t('st.l1.m.mass')} value={v.mass} max={Math.round(PARAMS.launchMass * 1.25)} marker={PARAMS.launchMass}
         markerLabel={t('st.l1.m.limit', { n: PARAMS.launchMass })} tone={massTone} sub={`${v.mass} / ${PARAMS.launchMass}`} />
-      <StMeter icon="⚡" label={t('st.l1.m.power')} value={v.margin} max={maxGen}
+      <StMeter icon="power" label={t('st.l1.m.power')} value={v.margin} max={maxGen}
         tone={v.margin !== null && v.margin < 0 ? 'bad' : v.margin !== null && v.margin < 10 ? 'warn' : 'ok'}
         sub={v.gen !== null ? t('st.l1.m.pow', { gen: v.gen, load: v.load }) : undefined} />
-      <StMeter icon="🚀" label={t('st.l1.m.maneuver')} value={v.maneuver} max={maxManeuver} marker={needManeuver}
+      <StMeter icon="maneuver" label={t('st.l1.m.maneuver')} value={v.maneuver} max={maxManeuver} marker={needManeuver}
         markerLabel={t('st.l1.m.need', { n: needManeuver })} tone={v.maneuver !== null && v.maneuver < needManeuver ? 'bad' : 'ok'} />
-      <StMeter icon="🫁" label={t('st.l1.m.autonomy')} value={v.autonomy} max={maxAutonomy}
+      <StMeter icon="life-support" label={t('st.l1.m.autonomy')} value={v.autonomy} max={maxAutonomy}
         tone={rep && !rep.checks.find(c => c.id === 'autonomy')?.ok ? 'bad' : 'ok'}
         sub={v.autonomy !== null ? t('st.l1.m.months', { n: Math.round(v.autonomy) }) : undefined} />
     </>
@@ -234,14 +235,17 @@ export function Level1() {
 
   return (
     <ScreenFrame title={t('st.l1.title')} subtitle={t('st.l1.sub')}
-      actions={<span className={`st-l1__mode st-l1__mode--${difficulty}`}>{easy ? "🌱" : "🔥"}<span className="st-l1__modetxt"> {t(`st.l1.mode.${difficulty}`)}</span></span>}>
+      actions={<>
+        <span className="stamp stamp--flat st-l1__stamp">{t('st.l1.stamp')}</span>
+        <span className={`stamp stamp--flat st-l1__mode ${easy ? 'stamp--green' : 'stamp--red'}`}><Icon name={difficulty} size={16} /><span className="st-l1__modetxt">{t(`st.l1.mode.${difficulty}`)}</span></span>
+      </>}>
       <SpaceBackdrop fixed density={0.8} />
 
       <div className="st-l1__mini" aria-hidden>
-        <span className="st-mini st-mini--mode">{easy ? "🌱" : "🔥"}</span>
-        <span className={`st-mini st-mini--${budgetTone}`}>💰 {v.cost}/{PARAMS.budget}</span>
-        <span className={`st-mini st-mini--${massTone}`}>⚖️ {v.mass}/{PARAMS.launchMass}</span>
-        <span className={`st-mini st-mini--${!complete ? 'idle' : ready ? 'ok' : 'bad'}`}>{!complete ? `${chosen}/5` : ready ? '✔' : `✖ ${fails.length}`}</span>
+        <span className="st-mini st-mini--mode"><Icon name={difficulty} size={16} /></span>
+        <span className={`st-mini st-mini--${budgetTone}`}><Icon name="budget" size={16} /> {v.cost}/{PARAMS.budget}</span>
+        <span className={`st-mini st-mini--${massTone}`}><Icon name="mass" size={16} /> {v.mass}/{PARAMS.launchMass}</span>
+        <span className={`st-mini st-mini--${!complete ? 'idle' : ready ? 'ok' : 'bad'}`}>{!complete ? `${chosen}/5` : ready ? <Icon name="ok" size={16} /> : <><Icon name="fail" size={16} /> {fails.length}</>}</span>
       </div>
 
       <div className="st-l1">
@@ -251,13 +255,14 @@ export function Level1() {
           <div className="st-tabs" role="tablist">
             {PARTS.map(p => (
               <button key={p} role="tab" title={t(`st.l1.part.${p}`)} aria-selected={active === p} className={`st-tab ${active === p ? 'is-active' : ''} ${cfg[p] ? 'is-done' : ''}`} onClick={() => setActive(p)}>
-                <span className="st-tab__icon" aria-hidden>{ICON[p]}</span>
+                <Icon name={ICON[p]} size={26} className="st-tab__icon" />
                 <span className="st-tab__name">{t(`st.l1.part.${p}`)}</span>
-                <span className="st-tab__val">{cfg[p] ? `✔ ${t(`st.l1.opt.${p}.${cfg[p]}`)}` : t('st.l1.empty')}</span>
+                
               </button>
             ))}
           </div>
 
+          <h3 className="st-h st-h--sm st-activename">{t(`st.l1.part.${active}`)}</h3>
           <div className="st-cards" role="radiogroup" aria-label={t(`st.l1.part.${active}`)} key={active}>
             {CHOICES[active].map((choice, ci) => {
               const c = comp(active, choice)
@@ -270,22 +275,22 @@ export function Level1() {
               return (
                 <button key={choice} type="button" role="radio" aria-checked={on} className={`st-card ${on ? 'is-on' : ''}`} style={{ ['--k' as string]: ci }}
                   onClick={() => choose(active, choice as never)}>
-                  {on && <span className="st-card__stamp">{t('st.l1.installed')}</span>}
-                  <span className="st-card__art" aria-hidden>{OPT_ICON[choice]}</span>
+                  {on && <span className="stamp stamp--yellow stamp-in st-card__stamp">{t('st.l1.installed')}</span>}
+                  <Icon name={OPT_ICON[choice]} size={52} className="st-card__art" />
                   <span className="st-card__name">{t(`st.l1.opt.${active}.${choice}`)}</span>
                   <span className="st-card__chips">
-                    <span className="st-chip st-chip--cost">💰 {c.cost as number}</span>
-                    <span className="st-chip st-chip--mass">⚖️ {c.mass as number}</span>
+                    <span className="chip chip--yellow"><Icon name="budget" size={16} />{c.cost as number}</span>
+                    <span className="chip chip--paper"><Icon name="mass" size={16} />{c.mass as number}</span>
                   </span>
                   <span className="st-card__cap">{cap}</span>
-                  <span className="st-card__pro">+ {t(`st.l1.pro.${active}.${choice}`)}</span>
-                  <span className="st-card__con">− {t(`st.l1.con.${active}.${choice}`)}</span>
+                  <span className="st-card__pro"><Icon name="ok" size={14} />{t(`st.l1.pro.${active}.${choice}`)}</span>
+                  <span className="st-card__con"><Icon name="fail" size={14} />{t(`st.l1.con.${active}.${choice}`)}</span>
                 </button>
               )
             })}
           </div>
 
-          <Explain key={`${active}-${difficulty}`} textKey={`st.l1.explain.${active}`} />
+          <Explain key={`${active}-${difficulty}`} textKey={`st.l1.explain.${active}`} titleKey={`st.l1.note.${active}`} tilt={0} />
         </section>
 
         {/* CENTER: ship + avatar */}
@@ -303,51 +308,55 @@ export function Level1() {
               </Bubble>
             </div>
           </div>
-          {easy && !react && <p className="st-l1__tip">💡 {fails.length > 0 && complete ? t('st.l1.tip.fix', { fix: t(`st.l1.fix.${fails[0].id}`) }) : t('st.l1.tip.easy')}</p>}
+          {easy && !react && <p className="st-l1__tip"><Icon name="field-note" size={22} /><span>{fails.length > 0 && complete ? t('st.l1.tip.fix', { fix: t(`st.l1.fix.${fails[0].id}`) }) : t('st.l1.tip.easy')}</span></p>}
         </section>
 
         {/* RIGHT: meters, checks, actions */}
-        <section className="panel st-l1__right" aria-label={t('st.l1.meters')}>
-          <h2 className="st-h">{t('st.l1.meters')}</h2>
-          <div className="st-meters">{meters}</div>
+        <div className="st-l1__right">
+          <section className="panel st-l1__meters" aria-label={t('st.l1.meters')}>
+            <h2 className="st-h">{t('st.l1.meters')}</h2>
+            <div className="st-meters">{meters}</div>
+          </section>
 
-          <h2 className="st-h st-h--sm">{t('st.l1.checks')}</h2>
-          {rep ? (
-            <ul className="st-checks">
-              {rep.checks.map(c => (
-                <li key={c.id} className={c.ok ? 'is-ok' : 'is-bad'}>
-                  <span className="st-checks__mark" aria-hidden>{c.ok ? '✔' : '✖'}</span>
-                  <span>{fmt(c)}</span>
-                </li>
-              ))}
-            </ul>
-          ) : <p className="st-checks__wait">{t('st.l1.checks.wait')}</p>}
+          <section className="surface-paper surface-paper--tilt-r st-l1__clip" aria-label={t('st.l1.checks')}>
+            <h2 className="paper-title squiggled">{t('st.l1.checks')}<Squiggle /></h2>
+            {rep ? (
+              <ul className="st-checks surface-rows">
+                {rep.checks.map(c => (
+                  <li key={c.id} className={c.ok ? 'is-ok' : 'is-bad'}>
+                    <Icon name={c.ok ? 'ok' : 'fail'} size={22} className="st-checks__mark stamp-in" />
+                    <span>{fmt(c)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="st-checks__wait fine">{t('st.l1.checks.wait')}</p>}
+          </section>
 
           <div className="st-l1__actions">
-            <button className="btn btn--orange" onClick={() => setReport(true)}>📋 {t('st.l1.eval')}</button>
+            <button className="btn btn--orange" onClick={() => setReport(true)}><Icon name="clipboard" size={24} /> {t('st.l1.eval')}</button>
             <button className={`btn btn--green st-launch ${ready ? 'is-ready' : ''}`} disabled={!ready || launching} onClick={doLaunch} aria-describedby="st-launch-hint">
-              🚀 {launching ? t('st.l1.launching') : t('st.l1.launch')}
+              <Icon name="maneuver" size={24} /> {launching ? t('st.l1.launching') : t('st.l1.launch')}
             </button>
             <p id="st-launch-hint" className={`st-l1__hint ${ready ? 'is-ok' : ''}`}>{launchHint}</p>
           </div>
-        </section>
+        </div>
       </div>
 
       {report && (
         <div className="st-modal" role="dialog" aria-modal="true" aria-labelledby="st-rep-t" onClick={e => { if (e.target === e.currentTarget) setReport(false) }}>
-          <div className="panel st-modal__card st-rep">
-            <h2 id="st-rep-t" className="title st-rep__title">{t('st.l1.report.title')}</h2>
+          <div className="surface-paper st-modal__card st-rep">
+            <h2 id="st-rep-t" className="paper-title st-rep__title squiggled">{t('st.l1.report.title')}<Squiggle /></h2>
             {!rep ? (
               <p className="st-rep__lead">{t('st.l1.report.incomplete', { list: missing })}</p>
             ) : (
               <>
                 <p className={`st-rep__lead ${ready ? 'is-ok' : 'is-bad'}`}>{ready ? t('st.l1.report.ok') : t('st.l1.report.bad', { n: fails.length })}</p>
-                <ul className="st-rep__list">
+                <ul className="st-rep__list surface-rows">
                   {rep.checks.map(c => (
                     <li key={c.id} className={c.ok ? 'is-ok' : 'is-bad'}>
-                      <div className="st-rep__row"><span className="st-checks__mark" aria-hidden>{c.ok ? '✔' : '✖'}</span><b>{fmt(c)}</b></div>
+                      <div className="st-rep__row"><Icon name={c.ok ? 'ok' : 'fail'} size={22} className="st-checks__mark" /><b>{fmt(c)}</b></div>
                       <p className="st-rep__why"><i>{t('st.l1.report.why')}:</i> {t(`st.l1.why.${c.id}`)}</p>
-                      {!c.ok && <p className="st-rep__fix">🔧 {t('st.l1.tip.fix', { fix: t(`st.l1.fix.${c.id}`) })}</p>}
+                      {!c.ok && <p className="st-rep__fix"><Icon name="wrench" size={16} /> {t('st.l1.tip.fix', { fix: t(`st.l1.fix.${c.id}`) })}</p>}
                     </li>
                   ))}
                 </ul>

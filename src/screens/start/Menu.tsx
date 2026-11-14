@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { game, useGame } from '../../game/store'
 import { useT } from '../../i18n'
 import { LangSwitch } from '../../game/ui'
+import { Icon } from '../../game/icons'
 import { SpaceBackdrop, Saturn } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { Astronaut, AVATAR_STORAGE_KEY } from '../../avatar'
@@ -54,30 +55,33 @@ export function Menu() {
         <nav className="st-menu__btns" aria-label="Menu">
           {inProgress && (
             <button className="btn btn--green st-menu__btn st-pop" style={{ ['--d' as string]: '0.45s' }} onClick={() => game.go(resumeScreen(mission))}>
-              ▶ {t('st.menu.continue')}
+              <Icon name="go" size={22} /> {t('st.menu.continue')}
               <small>{t('st.menu.continueSub', { m: mission.monthsElapsed, l: mission.level })}</small>
             </button>
           )}
-          <button className="btn btn--yellow st-menu__btn st-menu__btn--big st-pop" style={{ ['--d' as string]: '0.55s' }} onClick={play}>🚀 {t('st.menu.play')}</button>
+          <button className="btn btn--yellow st-menu__btn st-menu__btn--big st-pop" style={{ ['--d' as string]: '0.55s' }} onClick={play}><Icon name="go" size={30} /> {t('st.menu.play')}</button>
 
-          <div className="st-diff st-pop" style={{ ['--d' as string]: '0.65s' }} role="group" aria-label={t('st.menu.diff')}>
+          <div className="st-diff surface-paper st-pop" style={{ ['--d' as string]: '0.65s' }} role="group" aria-label={t('st.menu.diff')}>
             <div className="st-diff__seg">
               {modes.map(m => (
                 <button key={m} type="button" className={`st-diff__opt st-diff__opt--${m}`} aria-pressed={difficulty === m}
                   onClick={() => game.setDifficulty(m)}>
-                  {m === 'easy' ? '🌱' : '🔥'} {t(`st.menu.${m}`)}
+                  <Icon name={m} size={22} /> {t(`st.menu.${m}`)}
                 </button>
               ))}
             </div>
             <ul className="st-diff__list" key={difficulty}>
-              {[1, 2, 3].map(i => <li key={i}>{t(`st.menu.${difficulty}.d${i}`)}</li>)}
+              {[1, 2, 3].map(i => <li key={i}><Icon name={difficulty === 'easy' ? 'ok' : 'no-undo'} size={18} />{t(`st.menu.${difficulty}.d${i}`)}</li>)}
             </ul>
-            <p className="st-diff__same">{t('st.menu.same')}</p>
+            <p className="st-diff__same fine">{t('st.menu.same')}</p>
           </div>
 
           <div className="st-menu__row st-pop" style={{ ['--d' as string]: '0.75s' }}>
-            <button className="btn btn--orange st-menu__btn" onClick={() => game.go('avatar')}>🧑‍🚀 {t('st.menu.avatar')}</button>
-            <button className="btn btn--metal st-menu__btn" onClick={() => game.go('howto')}>📖 {t('st.menu.howto')}</button>
+            <button className="btn btn--orange st-menu__btn st-menu__btn--avatar" onClick={() => game.go('avatar')}>
+              <span className="st-menu__head" aria-hidden><Astronaut config={avatar} bust expression="happy" size="100%" /></span>
+              {t('st.menu.avatar')}
+            </button>
+            <button className="btn btn--metal st-menu__btn" onClick={() => game.go('howto')}><Icon name="manual" size={22} /> {t('st.menu.howto')}</button>
           </div>
         </nav>
       </main>

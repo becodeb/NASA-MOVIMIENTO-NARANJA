@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { game, useGame } from '../../game/store'
 import { useT } from '../../i18n'
 import { LangSwitch } from '../../game/ui'
+import { Icon, type IconName } from '../../game/icons'
 import { PARAMS } from '../../engine/data'
 import { SpaceBackdrop, Saturn, Titan, Enceladus, Earth } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
@@ -11,12 +12,12 @@ import { Bubble, introReturn } from './common'
 const TOTAL = 5
 const FULL = { structure: 'reinforced', propulsion: 'combined', power: 'nuclear', lifeSupport: 'regenerative', comms: 'redundant' } as const
 const POSES: [AstronautPose, AstronautExpression][] = [['wave', 'happy'], ['point', 'surprised'], ['thumbs-up', 'determined'], ['worried', 'worried'], ['cheer', 'happy']]
-const ICONS = [
+const ICONS: IconName[][] = [
   [],
-  ['🪐', '💍', '🟠', '💧'],
-  ['💰', '⚖️', '⚡', '🔧'],
-  ['☄️', '☢️', '📡', '🏠'],
-  ['🤖', '🔬', '🧮'],
+  ['saturn', 'rings', 'titan', 'enceladus'],
+  ['budget', 'mass', 'sunlight', 'wrench'],
+  ['em-impact', 'radiation', 'light-delay', 'return-home'],
+  ['probe', 'science', 'simplified'],
 ]
 
 export function Intro() {
@@ -60,12 +61,12 @@ export function Intro() {
         <h1 className="title st-intro__title">{t('st.intro.title')}</h1>
         <div className="st-intro__right">
           <LangSwitch />
-          <button className="btn btn--metal st-intro__skip" onClick={finish}>{t('st.intro.skip')} ▸▸</button>
+          <button className="btn btn--metal st-intro__skip" onClick={finish}>{t('st.intro.skip')} <Icon name="skip" size={20} /></button>
         </div>
       </header>
 
       <main className="st-intro__main">
-        <section className="panel st-intro__card" key={i} aria-labelledby="st-intro-h">
+        <section className="st-intro__card" key={i} aria-labelledby="st-intro-h">
           <div className="st-intro__left">
             {visual}
           </div>
@@ -76,9 +77,9 @@ export function Intro() {
               <Bubble>{t(`st.intro.${i}.say`)}</Bubble>
             </div>
             {bullets > 0 && (
-              <ul className="st-intro__list">
+              <ul className="st-intro__list surface-rows">
                 {Array.from({ length: bullets }, (_, k) => (
-                  <li key={k} style={{ ['--k' as string]: k }}><span aria-hidden>{ICONS[i - 1][k]}</span> {t(`st.intro.${i}.b${k + 1}`, bulletParams)}</li>
+                  <li key={k} style={{ ['--k' as string]: k }}><Icon name={ICONS[i - 1][k]} size={26} /><span>{t(`st.intro.${i}.b${k + 1}`, bulletParams)}</span></li>
                 ))}
               </ul>
             )}
@@ -88,15 +89,13 @@ export function Intro() {
       </main>
 
       <footer className="st-intro__foot">
+        <button className="btn btn--metal st-intro__prev" disabled={i === 1} onClick={() => setI(i - 1)}><Icon name="go" size={20} className="st-flip" /> {t('st.intro.back')}</button>
         <div className="st-dots" role="img" aria-label={t('st.intro.step', { n: i, total: TOTAL })}>
           {Array.from({ length: TOTAL }, (_, k) => <span key={k} className={`st-dot ${k + 1 === i ? 'is-on' : k + 1 < i ? 'is-past' : ''}`} />)}
         </div>
-        <div className="st-intro__nav">
-          <button className="btn btn--metal" disabled={i === 1} onClick={() => setI(i - 1)}>‹ {t('st.intro.back')}</button>
-          {last
-            ? <button className="btn btn--yellow st-intro__go" onClick={finish}>{introReturn.to ? t('st.intro.done') : `🚀 ${t('st.intro.go')}`}</button>
-            : <button className="btn btn--yellow" onClick={() => setI(i + 1)} autoFocus>{t('st.intro.next')} ›</button>}
-        </div>
+        {last
+          ? <button className="btn btn--yellow st-intro__go" onClick={finish}>{introReturn.to ? t('st.intro.done') : <><Icon name="go" size={24} /> {t('st.intro.go')}</>}</button>
+          : <button className="btn btn--yellow st-intro__nextbtn" onClick={() => setI(i + 1)} autoFocus>{t('st.intro.next')} <Icon name="go" size={20} /></button>}
       </footer>
     </div>
   )
