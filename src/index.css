@@ -14,6 +14,25 @@
   --panel: rgba(16, 27, 61, 0.88);
   --font-title: 'Lilita One', 'Arial Rounded MT Bold', system-ui, sans-serif;
   --font-body: 'Nunito', system-ui, sans-serif;
+
+  /* Locked shape tokens (docs/DESLOP.md): use these, do not invent new values. */
+  --r-sm: 10px;   /* paper, inner rows */
+  --r-md: 16px;   /* buttons, choice cards */
+  --r-lg: 22px;   /* console panels */
+  --r-pill: 999px;
+  --bw-sm: 3px;   /* chips, paper, meters */
+  --bw-md: 4px;   /* buttons, panels, cards */
+  --bw-lg: 6px;   /* hero frames, windows */
+  --sh-sm: 0 4px 0 var(--ink);  /* chips, small buttons */
+  --sh-md: 0 6px 0 var(--ink);  /* buttons, choice cards, paper */
+  --sh-lg: 0 8px 0 var(--ink);  /* console panels */
+  --paper: #f5f7ff;
+  --paper-line: #c5cde6;        /* dashed rules on paper */
+  --paper-dim: #4a5578;         /* secondary text on paper */
+  --divider: #34478a;           /* dashed ink-blue rule on dark */
+  --text-dim: #c9d2ec;          /* small secondary text on dark */
+  --tape: #ffd447;
+  --dock-h: 0px;                /* live height of the radio log (set by RadioLog) */
   color-scheme: dark;
 }
 
@@ -28,37 +47,121 @@ body {
 }
 button { font: inherit; }
 
-/* Cartoon button: thick ink outline + chunky drop */
+/* Cartoon button: thick ink outline + chunky drop.
+   Cel shading: flat fill, one hard light band on top, one hard shade band below. No blended gradient. */
 .btn {
+  --btn: var(--teal);
+  --btn-cel: inset 0 3px 0 rgba(255, 255, 255, 0.5), inset 0 -4px 0 rgba(17, 19, 38, 0.2);
   font-family: var(--font-title);
   font-size: clamp(16px, 2vw, 24px);
   letter-spacing: 0.5px;
   color: var(--white);
-  background: linear-gradient(180deg, #4fe6dd, var(--teal) 55%, #1fa9a1);
-  border: 4px solid var(--ink);
-  border-radius: 18px;
+  background: var(--btn);
+  border: var(--bw-md) solid var(--ink);
+  border-radius: var(--r-md);
   padding: 12px 28px;
-  box-shadow: 0 6px 0 var(--ink), inset 0 3px 0 rgba(255, 255, 255, 0.45);
+  box-shadow: var(--sh-md), var(--btn-cel);
   text-shadow: 0 2px 0 var(--ink);
   cursor: pointer;
   transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s;
 }
-.btn:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 8px 0 var(--ink), inset 0 3px 0 rgba(255,255,255,.45); }
-.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink), inset 0 3px 0 rgba(255,255,255,.45); }
+.btn:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: var(--sh-lg), var(--btn-cel); }
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink), var(--btn-cel); }
 .btn:focus-visible { outline: 4px solid var(--yellow); outline-offset: 3px; }
 .btn:disabled { filter: grayscale(0.8) brightness(0.7); cursor: not-allowed; transform: none; }
-.btn--yellow { background: linear-gradient(180deg, #ffe680, var(--yellow) 55%, #e8b51c); color: var(--ink); text-shadow: none; }
-.btn--orange { background: linear-gradient(180deg, #ffb070, var(--orange) 55%, #e06a10); }
-.btn--red { background: linear-gradient(180deg, #ff7f89, var(--red) 55%, #c42633); }
-.btn--green { background: linear-gradient(180deg, #9af0b5, var(--green) 55%, #3aa860); color: var(--ink); text-shadow: none; }
-.btn--metal { background: linear-gradient(180deg, #b3c0da, var(--metal) 55%, #5f6b88); }
+.btn--yellow { --btn: var(--yellow); color: var(--ink); text-shadow: none; }
+.btn--orange { --btn: var(--orange); }
+.btn--red { --btn: var(--red); }
+.btn--green { --btn: var(--green); color: var(--ink); text-shadow: none; }
+.btn--metal { --btn: var(--metal); }
+.btn > .icon { vertical-align: -0.2em; }
 
-.panel {
+/* ============ Surfaces: three types, used on purpose ============ */
+
+/* 1. CONSOLE: live instruments only (HUD, ship bay, mission board). `.panel` is the same thing. */
+.panel, .surface-console {
   background: var(--panel);
-  border: 4px solid var(--ink);
-  border-radius: 22px;
-  box-shadow: 0 8px 0 var(--ink), inset 0 0 0 2px rgba(56, 217, 208, 0.35);
+  border: var(--bw-md) solid var(--ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg), inset 0 0 0 2px rgba(56, 217, 208, 0.35);
 }
+
+/* 2. PAPER: briefings, reports, field notes, checklists. Light card, ink text, optional slight tilt. */
+.surface-paper {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--bw-sm) solid var(--ink);
+  border-radius: var(--r-sm);
+  box-shadow: var(--sh-md);
+  padding: 14px 16px;
+}
+.surface-paper--tilt-l { rotate: -0.6deg; }
+.surface-paper--tilt-r { rotate: 0.8deg; }
+/* strip of tape across the top-left corner */
+.surface-paper--tape::before {
+  content: ""; position: absolute; left: -16px; top: 4px; width: 58px; height: 16px; rotate: -34deg;
+  background: var(--tape); border: 2px solid var(--ink); pointer-events: none;
+}
+.surface-paper .label, .surface-paper .fine { color: var(--paper-dim); }
+.surface-paper .surface-rows > * + *, .surface-paper .row + .row { border-top-color: var(--paper-line); }
+.paper-title { font-family: var(--font-title); font-weight: 400; font-size: clamp(18px, 2.2vw, 24px); line-height: 1.1; margin: 0 0 6px; color: var(--ink); }
+
+/* 3. BARE ROWS: read-only lists. No box, a dashed ink-blue rule between rows. */
+.surface-rows { display: grid; }
+.surface-rows > *, .row { padding: 10px 0; }
+.surface-rows > * + *, .row + .row { border-top: 2px dashed var(--divider); }
+
+/* ============ Type helpers ============ */
+
+/* The one uppercase label style (HUD, reports, kickers). */
+.label { font-family: var(--font-body); font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
+/* Small secondary text: never thinner or dimmer than this. */
+.fine { font-size: 13px; font-weight: 700; color: var(--text-dim); }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Stamp: LEVEL n, EASY/HARD, HINT, INSTALLED, RESOLVED. Passive, so it may tilt. */
+.stamp {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-title); font-weight: 400; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1;
+  color: var(--ink); background: var(--teal);
+  border: var(--bw-sm) solid var(--ink); border-radius: 6px; padding: 5px 10px 4px;
+  rotate: -2deg; white-space: nowrap;
+}
+.stamp--yellow { background: var(--yellow); }
+.stamp--orange { background: var(--orange); }
+.stamp--green { background: var(--green); }
+.stamp--pink { background: var(--pink); }
+.stamp--red { background: var(--red); color: var(--white); }
+.stamp--paper { background: var(--paper); }
+.stamp--ghost { background: transparent; color: var(--text-dim); border-style: dashed; border-color: var(--divider); }
+.stamp--flat { rotate: none; }
+/* signature confirmation motion: add `.stamp-in` when a stamp appears */
+.stamp-in { animation: stamp-in 0.2s cubic-bezier(0.3, 1.5, 0.5, 1) both; }
+@keyframes stamp-in { from { scale: 1.6; opacity: 0; } 80% { translate: 0 1px; } }
+
+/* Chip: small ink-bordered pill for costs and states. */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  font-weight: 900; font-size: 13px; line-height: 1; color: var(--white);
+  background: #26356b; border: var(--bw-sm) solid var(--ink); border-radius: var(--r-pill); padding: 4px 10px 4px 7px;
+}
+.chip--paper { background: var(--paper); color: var(--ink); }
+.chip--yellow { background: var(--yellow); color: var(--ink); }
+.chip--green { background: var(--green); color: var(--ink); }
+.chip--red { background: var(--red); }
+
+/* Hand-drawn underline: <h2 class="squiggled">Launch checks<Squiggle /></h2> */
+.squiggled { position: relative; display: inline-block; padding-bottom: 7px; }
+.squiggle { position: absolute; left: 0; bottom: 0; width: 100%; height: 7px; overflow: visible; fill: none; stroke: var(--orange); stroke-width: 3; stroke-linecap: round; pointer-events: none; }
+.squiggle path { vector-effect: non-scaling-stroke; }
+.squiggle--yellow { stroke: var(--yellow); }
+.squiggle--teal { stroke: var(--teal); }
+.squiggle--pink { stroke: var(--pink); }
+
+/* Icons (src/game/icons.tsx) */
+.icon { display: inline-block; flex: none; vertical-align: middle; overflow: visible; }
+.icon--sm .d { display: none; }
 
 .title {
   font-family: var(--font-title);

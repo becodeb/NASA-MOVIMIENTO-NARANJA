@@ -1,8 +1,8 @@
 // Screen router. Each folder src/screens/<group>/index.ts exports `screens: Partial<Record<ScreenId, ComponentType>>`.
-import { useEffect, useSyncExternalStore, type ComponentType } from 'react'
-import { installSfx, isMuted, onMuteChange, setMuted } from './game/sfx'
+import { useEffect, type ComponentType } from 'react'
+import { installSfx } from './game/sfx'
 import { useGame, game, type ScreenId } from './game/store'
-import { ScreenFrame, Toasts } from './game/ui'
+import { FallbackControls, RadioLog, ScreenFrame } from './game/ui'
 import { useT } from './i18n'
 import { SpaceBackdrop } from './art/worlds'
 
@@ -14,8 +14,8 @@ function ComingSoon() {
   return (
     <ScreenFrame title="SPACE ODYSSEY">
       <SpaceBackdrop fixed />
-      <div className="panel" style={{ maxWidth: 560, margin: '10vh auto', padding: 24, textAlign: 'center' }}>
-        <p style={{ fontWeight: 800, fontSize: 18 }}>{t('common.comingSoon')}</p>
+      <div className="surface-paper surface-paper--tape surface-paper--tilt-l" style={{ maxWidth: 520, margin: '10vh auto', padding: 24, textAlign: 'center' }}>
+        <p style={{ fontWeight: 800, fontSize: 18, marginTop: 0 }}>{t('common.comingSoon')}</p>
         <button className="btn btn--yellow" onClick={() => game.go('menu')}>{t('common.menu')}</button>
       </div>
     </ScreenFrame>
@@ -23,16 +23,6 @@ function ComingSoon() {
 }
 
 let sfxInstalled = false
-function MuteButton() {
-  const t = useT()
-  const muted = useSyncExternalStore(onMuteChange, isMuted)
-  return (
-    <button className="btn btn--metal app-mute" onClick={() => setMuted(!muted)}
-      aria-label={t(muted ? 'common.soundOn' : 'common.soundOff')} title={t(muted ? 'common.soundOn' : 'common.soundOff')}>
-      {muted ? '🔇' : '🔊'}
-    </button>
-  )
-}
 
 export default function App() {
   useEffect(() => { if (!sfxInstalled) { sfxInstalled = true; installSfx() } }, [])
@@ -41,8 +31,9 @@ export default function App() {
   return (
     <>
       <Screen key={screen} />
-      <Toasts />
-      <MuteButton />
+      {/* docked crew radio (the old toasts) and the sound button for screens without a corner cluster */}
+      <RadioLog />
+      <FallbackControls />
     </>
   )
 }
