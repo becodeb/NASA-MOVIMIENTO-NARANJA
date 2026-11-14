@@ -75,7 +75,7 @@ export function useGame(): GameState {
 }
 
 export const game = {
-  go(screen: ScreenId) { set({ screen }); window.scrollTo?.(0, 0) },
+  go(screen: ScreenId) { set({ screen }); window.scrollTo?.(0, 0); document.getElementById('app-scroll')?.scrollTo(0, 0) },
   setDifficulty(difficulty: Difficulty) { set({ difficulty }) },
   setAvatar(avatar: AvatarConfig) { set({ avatar }) },
   markSeen(key: string) { set({ seen: { ...state.seen, [key]: true } }) },

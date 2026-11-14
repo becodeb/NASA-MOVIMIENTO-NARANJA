@@ -23,6 +23,11 @@ const MAIN_ALT = 3 // km
 const MAIN_SPEED = 150 // m/s
 const altAt = (s: number) => Math.max(0.6, 12 - s * 1.1)
 const speedAt = (s: number) => 90 + 560 * Math.exp(-s / 2.4)
+const ALT0 = altAt(0)
+const SPEED0 = speedAt(0)
+/** 0..1 progress toward an (altitude, speed) window: the slower of the two readings decides. */
+const progressTo = (alt: number, speed: number, altLimit: number, speedLimit: number) =>
+  Math.max(0, Math.min(1, (ALT0 - alt) / (ALT0 - altLimit), (SPEED0 - speed) / (SPEED0 - speedLimit)))
 
 interface Feedback { ok: boolean; key: string; params: Params; expl?: string }
 
@@ -116,6 +121,9 @@ export function Reentry() {
   const speed = speedAt(clock)
   const drogueOk = alt <= DROGUE_ALT && speed <= DROGUE_SPEED
   const mainsOk = drogue && alt <= MAIN_ALT && speed <= MAIN_SPEED
+  // which chute button is still waiting on altitude/speed, and how far along the descent is
+  const waiting: 'drogue' | 'main' | null = step !== 'parachutes' ? null : !drogue ? (drogueOk ? null : 'drogue') : mainsOk ? null : 'main'
+  const waitPct = waiting === 'drogue' ? progressTo(alt, speed, DROGUE_ALT, DROGUE_SPEED) : waiting === 'main' ? progressTo(alt, speed, MAIN_ALT, MAIN_SPEED) : 0
 
   let phase: ReentryPhase = 'separation'
   if (failed) phase = 'entry'
@@ -222,6 +230,18 @@ export function Reentry() {
                       <button className="btn btn--orange" disabled={!drogueOk || drogue} onClick={() => setDrogue(true)}>{t('l3.chute.drogue.cta')}</button>
                       <button className="btn btn--yellow" disabled={!mainsOk} onClick={() => run('parachutes')}>{t('l3.chute.main.cta')}</button>
                     </div>
+                    {waiting && (
+                      <div className="l3-chute-wait">
+                        <div className="l3-prog" role="progressbar" aria-label={t(`l3.chute.progress.${waiting}`)} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(waitPct * 100)}>
+                          <span className="l3-prog__label">{t(`l3.chute.progress.${waiting}`)}<b>{Math.round(waitPct * 100)}%</b></span>
+                          <div className="l3-prog__track"><div className="l3-prog__fill" style={{ width: `${waitPct * 100}%` }} /></div>
+                        </div>
+                        <div className="l3-chute-av">
+                          <Astronaut config={avatar} pose={waiting === 'drogue' ? 'worried' : 'thumbs-up'} expression={waiting === 'drogue' ? 'determined' : 'happy'} size={96} />
+                          <p className="l3-chute-av__bubble">{t(`l3.chute.av.${waiting}`)}</p>
+                        </div>
+                      </div>
+                    )}
                     <p className="l3-note">{drogueOk ? (drogue ? t('l3.chute.window') : t('l3.chute.window')) : t('l3.chute.waiting', { alt: alt.toFixed(1), speed: Math.round(speed) })}</p>
                     <p className="l3-note">{t('l3.chute.sim')}</p>
                   </>

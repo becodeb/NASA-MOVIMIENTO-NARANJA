@@ -107,7 +107,7 @@ export function Level1() {
   const [report, setReport] = useState(false)
   const [launching, setLaunching] = useState(false)
   const timers = useRef<number[]>([])
-  useEffect(() => { document.getElementById('root')?.scrollTo(0, 0) }, [])
+  useEffect(() => { document.getElementById('app-scroll')?.scrollTo(0, 0) }, [])
   useEffect(() => { const ts = timers.current; return () => ts.forEach(clearTimeout) }, [])
   useEffect(() => {
     if (!report) return

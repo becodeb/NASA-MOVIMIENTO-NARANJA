@@ -134,7 +134,7 @@ function Ops({ mission }: { mission: MissionState }) {
       params: o.params,
       explanationKey: o.explanationKey,
       status: state.emergencies[active].status,
-      month: state.saturnMonth,
+      month: EMERGENCY_ORDER.indexOf(active) + 1, // the emergency's own Saturn month, also while a multi-step event is still open
       deltas: deltas(before, state),
     })
     if (o.success && (o.closed ? state.emergencies[active].status !== 'unresolved' : false)) {
@@ -163,15 +163,19 @@ function Ops({ mission }: { mission: MissionState }) {
   // ---- Derived presentation
   const view = useMemo(() => (active ? getEmergency(mission, active) : null), [mission, active])
   const shownId: EmergencyId | null = outcome ? outcome.id : active
-  const bad = outcome ? !outcome.success : false
-  const pose: AstronautPose = outcome
-    ? outcome.success ? (outcome.closed && outcome.status !== 'unresolved' ? 'cheer' : 'thumbs-up') : 'worried'
+  // How the last decision actually went: crew lines and poses follow this, never the raw step success flag.
+  const tone: 'good' | 'partial' | 'step' | 'bad' | null = !outcome ? null
+    : outcome.closed ? (outcome.status === 'resolved' ? 'good' : outcome.status === 'partial' ? 'partial' : 'bad')
+    : outcome.success ? 'step' : 'bad'
+  const bad = tone === 'bad'
+  const pose: AstronautPose = tone
+    ? tone === 'good' ? 'cheer' : tone === 'bad' ? 'worried' : 'thumbs-up'
     : active ? 'worried' : last === 'science' ? 'point' : last === 'fixed' ? 'thumbs-up' : 'idle'
-  const expression: AstronautExpression = outcome
-    ? outcome.success ? 'happy' : 'worried'
+  const expression: AstronautExpression = tone
+    ? tone === 'good' ? 'happy' : tone === 'bad' ? 'worried' : 'determined'
     : active ? (active === 'impact' || active === 'radiation' ? 'surprised' : 'worried') : last ? 'happy' : 'determined'
-  const bubble = outcome
-    ? t(`l2.crew.${outcome.id}.${outcome.success ? 'good' : 'bad'}`)
+  const bubble = outcome && tone
+    ? t(`l2.crew.${outcome.id}.${tone}`)
     : active ? t(`l2.crew.${active}.alarm`)
     : last === 'science' ? t('l2.crew.science')
     : last === 'sent' ? t('l2.crew.sent')
@@ -186,7 +190,7 @@ function Ops({ mission }: { mission: MissionState }) {
   return (
     <ScreenFrame title={t('l2.title')} subtitle={t('l2.subtitle')} alarm={!!active} actions={levelStamp(t)}>
       <div className={`l2-wrap ${active ? 'is-alarm' : ''}`}>
-        <Hud mission={mission} compact />
+        <Hud mission={mission} compact sticky />
         <div className="l2-main">
           <div className="l2-left">
             <Stage

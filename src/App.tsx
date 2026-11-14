@@ -30,7 +30,7 @@ export default function App() {
   const Screen: ComponentType = SCREENS[screen] ?? (screen === 'opening' ? SCREENS.menu : undefined) ?? ComingSoon
   return (
     <>
-      <Screen key={screen} />
+      <div id="app-scroll" className="app-scroll"><Screen key={screen} /></div>
       {/* docked crew radio (the old toasts) and the sound button for screens without a corner cluster */}
       <RadioLog />
       <FallbackControls />

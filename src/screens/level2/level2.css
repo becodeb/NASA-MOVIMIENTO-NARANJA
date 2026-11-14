@@ -1,5 +1,5 @@
 /* LEVEL 2: prefix l2- */
-.l2-wrap { max-width: 1400px; margin: 0 auto; display: grid; gap: 14px; position: relative; padding-bottom: calc(var(--dock-h, 0px) + 12px); }
+.l2-wrap { max-width: 1400px; margin: 0 auto; display: grid; gap: 14px; position: relative; padding-bottom: 12px; }
 .l2-main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
 .l2-left { display: grid; gap: 14px; min-width: 0; }
 .l2-empty { padding: 24px; text-align: center; max-width: 520px; margin: 10vh auto; font-weight: 800; }
@@ -95,7 +95,7 @@
 .l2-card--calm { text-align: center; display: grid; gap: 10px; justify-items: center; }
 .l2-card__title { font-size: clamp(20px, 2.6vw, 30px); line-height: 1.1; }
 .l2-big { font-size: clamp(18px, 2.4vw, 26px); }
-.l2-console { scroll-margin-bottom: calc(var(--dock-h, 0px) + 16px); }
+.l2-console { scroll-margin-bottom: 16px; scroll-margin-top: calc(var(--hud-h, 0px) + 16px); }
 .l2-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
 
 /* ---------- emergency: paper incident report ---------- */
@@ -145,7 +145,7 @@
 .surface-paper .l2-blackout { margin: 4px 0; padding: 8px 12px; display: flex; align-items: center; gap: 10px; border: var(--bw-sm) solid var(--ink); border-radius: var(--r-sm); background: #ffd9dc; font-weight: 800; font-size: 14px; color: var(--ink); }
 
 /* ---------- mission board (console) ---------- */
-.l2-board { padding: 14px 16px 16px; display: grid; gap: 16px; align-content: start; position: sticky; top: 8px; max-height: calc(100vh - 24px - var(--dock-h, 0px)); overflow: auto; }
+.l2-board { padding: 14px 16px 16px; display: grid; gap: 16px; align-content: start; position: sticky; top: calc(var(--hud-h, 0px) + 22px); max-height: calc(100vh - var(--hud-h, 0px) - 36px - var(--dock-h, 0px)); overflow: auto; }
 .l2-board__title { font-size: 26px; }
 .l2-board h3 { font-family: var(--font-title); font-weight: 400; font-size: 17px; letter-spacing: .5px; margin: 0 0 6px; color: var(--teal); justify-self: start; }
 .l2-board section { display: grid; gap: 6px; }

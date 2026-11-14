@@ -44,7 +44,7 @@ function Decisions({ mission }: { mission: MissionState }) {
           <li key={id} className={`l2-log__row is-${e.status}`}>
             <Icon name={EM_ICON[id]} size={36} />
             <div>
-              <b>{t('l2.fail.decision', { n: i + 1, event: t(`engine.em.${id}.title`), option: e.choice ? t(`engine.opt.${id}.${e.choice}`) : '?' })}</b>
+              <b>{t('l2.fail.decision', { n: i + 1, m: e.closedAtMonth ?? '?', event: t(`engine.em.${id}.title`), option: e.choice ? t(`engine.opt.${id}.${e.choice}`) : '?' })}</b>
               <p>{e.choice ? t(`engine.expl.${id}.${e.choice}`) : ''}</p>
               <span className={`stamp stamp--${e.status === 'resolved' ? 'green' : e.status === 'partial' ? 'yellow' : 'red'}`}>{t(`l2.status.${e.status}`)}</span>
             </div>
@@ -98,7 +98,6 @@ export function Report({ mission, avatar }: { mission: MissionState; avatar: Ava
           <h3 className="paper-title squiggled l2-rep__h">{t('l2.report.log')}<Squiggle /></h3>
           <Decisions mission={mission} />
           <Explain titleKey="l2.rep.note" textKey="engine.finish.proceedWhy" tilt={0} />
-          <p className="l2-note fine">{t('l2.report.note')}</p>
           <button className="btn btn--yellow l2-rep__go" onClick={go}>{t('l2.report.go')} <Icon name="go" size={26} /></button>
         </div>
       </div>

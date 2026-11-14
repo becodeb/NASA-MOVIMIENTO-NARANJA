@@ -20,8 +20,8 @@ export type MeterTone = 'teal' | 'orange' | 'yellow' | 'green' | 'pink'
  * - `warnAbove`/`dangerAbove` + `zoneFrom`: for "less is better" readings (radiation dose) that fill toward a red zone.
  * - `valueText`: replaces the default "value + unit" readout.
  */
-export function Meter({ label, value, max, unit = '', icon, tone = 'teal', warnBelow, dangerBelow, warnAbove, dangerAbove, zoneFrom, valueText, hint }: {
-  label: string; value: number; max: number; unit?: string; icon?: IconName | ReactNode; tone?: MeterTone
+export function Meter({ label, value, max, unit = '', icon, tone = 'teal', warnBelow, dangerBelow, warnAbove, dangerAbove, zoneFrom, valueText, hint, shortLabel }: {
+  label: string; shortLabel?: string; value: number; max: number; unit?: string; icon?: IconName | ReactNode; tone?: MeterTone
   warnBelow?: number; dangerBelow?: number; warnAbove?: number; dangerAbove?: number; zoneFrom?: number
   valueText?: string; hint?: string
 }) {
@@ -35,7 +35,9 @@ export function Meter({ label, value, max, unit = '', icon, tone = 'teal', warnB
     <div className={`ui-meter ui-meter--${level} ui-meter--${tone}`} title={hint}>
       <div className="ui-meter__top">
         {icon && <span className="ui-meter__icon" aria-hidden>{isIconName(icon) ? <Icon name={icon} size={22} /> : icon}</span>}
-        <span className="ui-meter__label">{label}</span>
+        {shortLabel
+          ? <span className="ui-meter__label"><span className="ui-meter__full">{label}</span><span className="ui-meter__short" aria-hidden>{shortLabel}</span></span>
+          : <span className="ui-meter__label">{label}</span>}
         <span className="ui-meter__value">{valueText ?? `${Number.isInteger(value) ? value : value.toFixed(1)}${unit}`}</span>
       </div>
       <div className={`ui-meter__track ${zone !== undefined ? 'ui-meter__track--zone' : ''}`} style={trackStyle}
@@ -47,14 +49,26 @@ export function Meter({ label, value, max, unit = '', icon, tone = 'teal', warnB
 }
 
 /** Mission resources HUD (levels 2–3 and transit): mission clock, three instrument clusters, comms link. */
-export function Hud({ mission, compact = false }: { mission: MissionState; compact?: boolean }) {
+export function Hud({ mission, compact = false, sticky = false }: { mission: MissionState; compact?: boolean; sticky?: boolean }) {
   const t = useT()
+  const ref = useRef<HTMLDivElement>(null)
+  // A sticky HUD publishes its height as `--hud-h`, so sticky siblings (the mission board) can sit right below it.
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!sticky || !el) return
+    const root = document.documentElement
+    const publish = () => root.style.setProperty('--hud-h', `${el.offsetHeight}px`)
+    publish()
+    const ro = new ResizeObserver(publish)
+    ro.observe(el)
+    return () => { ro.disconnect(); root.style.removeProperty('--hud-h') }
+  }, [sticky])
   const load = loadTotal(mission)
   const margin = mission.powerGeneration - load
   const comms = commsMode(mission)
   const limit = PARAMS.radiationLimit
   return (
-    <div className={`ui-hud panel ${compact ? 'ui-hud--compact' : ''}`}>
+    <div ref={ref} className={`ui-hud panel ${compact ? 'ui-hud--compact' : ''} ${sticky ? 'ui-hud--sticky' : ''}`}>
       <div className="ui-hud__clock"><Icon name="calendar" size={18} />{t('hud.month', { m: mission.monthsElapsed })}</div>
       <div className="ui-hud__group">
         <span className="label ui-hud__glabel">{t('hud.group.ship')}</span>
@@ -68,7 +82,7 @@ export function Hud({ mission, compact = false }: { mission: MissionState; compa
       </div>
       <div className="ui-hud__group">
         <span className="label ui-hud__glabel">{t('hud.group.crew')}</span>
-        <Meter icon="life-support" tone="teal" label={t('hud.vital')} value={mission.vital} max={130} warnBelow={40} dangerBelow={16} hint={t('hud.vital.hint')} />
+        <Meter icon="life-support" tone="teal" label={t('hud.vital')} shortLabel={t('hud.vital.short')} value={mission.vital} max={130} warnBelow={40} dangerBelow={16} hint={t('hud.vital.hint')} />
         <Meter icon="radiation" tone="pink" label={t('hud.radiation')} value={mission.radiation} max={40} zoneFrom={limit} warnAbove={limit * 0.66} dangerAbove={limit} hint={t('hud.radiation.hint')} />
       </div>
       <div className={`ui-hud__chip ui-hud__chip--${comms}`}>
@@ -175,23 +189,28 @@ export function Explain({ titleKey = 'common.why', title, textKey, params, defau
 
 // ---------- radio log (replaces the toast stack) ----------
 
+/** Screens where the dock keeps its slot even when silent, so a message arriving never shifts the layout. */
+const RADIO_RESERVED: ScreenId[] = ['level1', 'level2', 'level3', 'reentry']
+
 const KIND_ICON: Record<Toast['kind'], IconName> = { ok: 'ok', bad: 'fail', info: 'hint' }
 
 /**
- * Crew radio log bound to the store's toasts. One line per message, newest on top, two visible at most.
- * It is docked at the bottom edge of the scroll area and takes its own space there, so content can always be
- * scrolled clear of it; when a message arrives it also nudges the scroll so the control just used stays visible.
- * Its height is published as `--dock-h` on <html> for sticky layouts that need it.
+ * Crew radio log bound to the store's toasts. Shows the newest message only.
+ * It is a flex sibling BELOW the scroll area (#app-scroll), so it can never cover or intercept clicks on content;
+ * on mission screens it keeps a constant-height slot (empty when silent), so messages never shift or cover controls.
+ * Its height is still published as `--dock-h` on <html> for layouts that size against the viewport.
  */
 export function RadioLog() {
   const t = useT()
-  const { toasts } = useGame()
+  const { toasts, screen } = useGame()
   const ref = useRef<HTMLDivElement>(null)
-  const shown = toasts.slice(-2).reverse()
+  // One message at a time keeps the dock a constant height, so it never moves the controls under the player's finger.
+  const shown = toasts.slice(-1)
+  const reserve = RADIO_RESERVED.includes(screen)
   const newest = shown[0]?.id
   useLayoutEffect(() => {
     const el = ref.current
-    document.documentElement.style.setProperty('--dock-h', `${el && shown.length ? el.offsetHeight : 0}px`)
+    document.documentElement.style.setProperty('--dock-h', `${el && (shown.length || reserve) ? el.offsetHeight : 0}px`)
   })
   // Remember the last control pressed (it may be disabled, and so unfocused, by the time the message lands).
   const pressed = useRef<Element | null>(null)
@@ -205,11 +224,11 @@ export function RadioLog() {
     const target = pressed.current
     if (!el || newest === undefined || !target || !target.isConnected || el.contains(target)) return
     const overlap = target.getBoundingClientRect().bottom + 16 - el.getBoundingClientRect().top
-    if (overlap > 0) el.parentElement?.scrollBy({ top: overlap, behavior: 'smooth' })
+    if (overlap > 0) document.getElementById('app-scroll')?.scrollBy({ top: overlap, behavior: 'smooth' })
   }, [newest])
   return (
-    <div ref={ref} className={`ui-radio ${shown.length ? 'is-on' : ''}`} role="log" aria-live="polite" aria-label={t('common.radio')}>
-      {shown.length > 0 && <span className="ui-radio__tag"><Icon name="antenna" size={18} /><span>{t('common.radio')}</span></span>}
+    <div ref={ref} className={`ui-radio ${shown.length ? 'is-on' : ''} ${reserve ? 'is-reserved' : ''}`} role="log" aria-live="polite" aria-label={t('common.radio')}>
+      {(shown.length > 0 || reserve) && <span className="ui-radio__tag"><Icon name="antenna" size={18} /><span>{t('common.radio')}</span></span>}
       <div className="ui-radio__list">
         {shown.map(x => <RadioEntry key={x.id} toast={x} />)}
       </div>

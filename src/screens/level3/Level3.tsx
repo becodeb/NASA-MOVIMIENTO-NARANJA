@@ -26,7 +26,7 @@ function Bar({ have, need, ok }: { have: number; need: number; ok: boolean }) {
   )
 }
 
-function RouteCard({ o, selected, onPick, mission }: { o: RouteOption; selected: boolean; onPick: () => void; mission: MissionState }) {
+function RouteCard({ o, selected, onPick, mission, titanHint, easy }: { o: RouteOption; selected: boolean; onPick: () => void; mission: MissionState; titanHint: boolean; easy: boolean }) {
   const t = useT()
   const tp = useTP()
   const prep = o.useTitan ? PARAMS.titanPrep : 0
@@ -76,6 +76,11 @@ function RouteCard({ o, selected, onPick, mission }: { o: RouteOption; selected:
         <ul className="l3-card__fails">
           {o.failing.map(f => <li key={f.variable + f.msgKey}><Icon name="warning" size={18} />{tp(f.msgKey, f.params)}</li>)}
         </ul>
+      )}
+      {!o.feasible && titanHint && (
+        easy
+          ? <p className="l3-card__tip"><span className="stamp stamp--yellow stamp--flat">{t('l3.hint.stamp')}</span><span>{t('l3.card.titanHint')}</span></p>
+          : <p className="l3-card__tip l3-card__tip--soft"><Icon name="gravity-assist" size={16} />{t('l3.card.titanHint')}</p>
       )}
     </div>
   )
@@ -262,7 +267,7 @@ export function Level3() {
             <ul className="l3-legend">{ROUTE_IDS.map(id => <li key={id}><i style={{ background: ROUTE_COLOR[id] }} />{t(`l3.route.${id}.name`)} · {t('l3.card.months', { m: ROUTES[id].months })}</li>)}</ul>
           </div>
           <div className="l3-cards" role="radiogroup" aria-label={t('l3.s2.title')}>
-            {opts.map(o => <RouteCard key={o.id} o={o} mission={mission} selected={sel === o.id && o.feasible} onPick={() => setSel(o.id)} />)}
+            {opts.map(o => <RouteCard key={o.id} o={o} mission={mission} titanHint={!titanOn && !anyWithout && anyWith} easy={easy} selected={sel === o.id && o.feasible} onPick={() => setSel(o.id)} />)}
           </div>
           {easy && <Hint>{t('l3.s2.hint')}</Hint>}
           <Explain titleKey="l3.s2.note" textKey="l3.s2.why" />

@@ -358,3 +358,19 @@ p.l3-note { display: block; }
 @media (max-width: 960px) { .l3-hero__frame { height: 260px; } }
 .l3-wrap > * { min-width: 0; }
 @media (max-width: 960px) { .l3-hero__row { grid-template-columns: minmax(0, 1fr); } .l3-hero__scene { max-width: none; } }
+
+/* route cards: hint that the Titan assist is the only way home */
+.l3-card__tip { margin: 6px 0 0; display: flex; gap: 8px; align-items: flex-start; font-size: 13px; font-weight: 800; line-height: 1.35; }
+.l3-card__tip .stamp { font-size: 11px; margin-top: 1px; flex: none; }
+.l3-card__tip--soft { font-weight: 700; opacity: .85; align-items: center; }
+
+/* parachutes: progress toward the next window + the crew's comment */
+.l3-chute-wait { display: grid; gap: 10px; margin-top: 14px; }
+.l3-prog { display: grid; gap: 4px; }
+.l3-prog__label { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); }
+.l3-prog__label b { font-family: var(--font-title); font-weight: 400; font-size: 15px; letter-spacing: 0; color: var(--yellow); }
+.l3-prog__track { height: 14px; border: var(--bw-sm) solid var(--ink); border-radius: var(--r-pill); background: #0b1430; overflow: hidden; }
+.l3-prog__fill { height: 100%; background-color: var(--teal); border-right: 3px solid var(--ink); transition: width .25s linear; }
+.l3-chute-av { display: flex; align-items: center; gap: 10px; }
+.l3-chute-av > svg { flex: none; }
+.l3-chute-av__bubble { margin: 0; padding: 8px 12px; background: var(--paper); color: var(--ink); border: var(--bw-sm) solid var(--ink); border-radius: var(--r-sm) var(--r-sm) var(--r-sm) 2px; font-weight: 800; font-size: 14px; line-height: 1.35; }
