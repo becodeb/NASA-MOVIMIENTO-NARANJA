@@ -4,3 +4,4 @@ dist
 .env
 .env.*
 /video/out
+/docs
