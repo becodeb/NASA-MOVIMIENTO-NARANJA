@@ -141,7 +141,7 @@ export function Chat({ getContext, onTicketSaved, header }: { getContext: () => 
         {notice && <div className="dv-notice" role="status">{notice}</div>}
         <div className="dv-row">
           <button type="button" className="btn btn--metal dv-attach" title={t('dv.attach')} aria-label={t('dv.attach')} onClick={() => fileRef.current?.click()} disabled={busy}>
-            <Icon name="magnifier" size={22} />
+            <Icon name="attach" size={22} />
           </button>
           <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden
             onChange={e => { void addFiles(Array.from(e.target.files ?? [])); e.target.value = '' }} />

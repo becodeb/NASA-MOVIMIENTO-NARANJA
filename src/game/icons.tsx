@@ -643,6 +643,9 @@ const ICONS = {
       <path d="M9 14l3-7 3 7M10.2 11.5h3.6" strokeWidth="2" />
     </>
   )],
+  attach: ['current', c => (
+    <path d="M16.5 7.5 8.8 15.2a2.2 2.2 0 0 0 3.1 3.1l8-8a4.4 4.4 0 0 0-6.2-6.2l-8.3 8.3a6.6 6.6 0 0 0 9.3 9.3l6.3-6.3" fill="none" stroke={c} strokeWidth="2.4" />
+  )],
   close: ['current', c => <path d="M6 6l12 12M18 6 6 18" stroke={c} strokeWidth="3" />],
   expand: ['current', c => <path d="M5.5 9l6.5 6.5L18.5 9" stroke={c} strokeWidth="3" />],
 } satisfies Record<string, Def>

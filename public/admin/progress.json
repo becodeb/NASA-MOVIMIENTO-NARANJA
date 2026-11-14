@@ -221,6 +221,12 @@
       "level": "success",
       "title": "Pulido y pruebas completas",
       "body": "Se corrigieron todos los detalles de la prueba completa: los avisos ya no tapan botones, las frases del astronauta coinciden con lo que pasa, los meses se entienden ('mes 1 de 6 en Saturno'), la barra de recursos queda visible en emergencias y hay una pista de la asistencia de Titán. El juego está terminado."
+    },
+    {
+      "at": "2026-11-14T19:28:29-03:00",
+      "level": "success",
+      "title": "Modo de correcciones listo",
+      "body": "El equipo puede cargar correcciones en nasa.becode.com.ar/dev (con contraseña): un asistente hace preguntas hasta entender cada problema, se pueden pegar capturas, y dentro del juego aparece un botón para reportar desde la pantalla donde están."
     }
   ]
 }
