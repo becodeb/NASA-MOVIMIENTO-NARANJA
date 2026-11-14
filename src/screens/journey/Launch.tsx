@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
+import { Icon, type IconName } from '../../game/icons'
 import { RingParticles, Saturn, SolarSystemMap, SpaceBackdrop } from '../../art/worlds'
 import { LaunchRocket, Spaceship, type LaunchPhase } from '../../art/ships'
 import type { MissionState } from '../../engine/types'
@@ -14,10 +15,10 @@ const INSERTION_MS = 5000
 const SATURN_AU = 9.5
 const ease = (x: number) => x * x * (3 - 2 * x)
 
-function Chip({ icon, label, value, max, unit = '', tone }: { icon: string; label: string; value: number; max: number; unit?: string; tone: string }) {
+function Chip({ icon, label, value, max, unit = '', tone }: { icon: IconName; label: string; value: number; max: number; unit?: string; tone: string }) {
   return (
     <div className="jy-chip" style={{ ['--tone' as string]: tone }}>
-      <span className="jy-chip__icon" aria-hidden>{icon}</span>
+      <span className="jy-chip__icon"><Icon name={icon} size={20} /></span>
       <span className="jy-chip__label">{label}</span>
       <b className="jy-chip__value">{Math.round(value)}{unit}</b>
       <span className="jy-chip__track"><span style={{ width: `${Math.max(0, Math.min(100, (value / max) * 100))}%` }} /></span>
@@ -29,9 +30,9 @@ function Counters({ trip, maneuver, vital, sunlight }: { trip: TripNumbers; mane
   const t = useT()
   return (
     <div className="jy-chips">
-      <Chip icon="🚀" label={t('jy.la.maneuver')} value={maneuver} max={trip.depManeuver} tone="var(--orange)" />
-      <Chip icon="🫁" label={t('jy.la.vital')} value={vital} max={trip.depVital} tone="var(--teal)" />
-      <Chip icon="☀️" label={t('jy.la.sun')} value={sunlight} max={100} unit="%" tone="var(--yellow)" />
+      <Chip icon="maneuver" label={t('jy.la.maneuver')} value={maneuver} max={trip.depManeuver} tone="var(--orange)" />
+      <Chip icon="life-support" label={t('jy.la.vital')} value={vital} max={trip.depVital} tone="var(--teal)" />
+      <Chip icon="sunlight" label={t('jy.la.sun')} value={sunlight} max={100} unit="%" tone="var(--yellow)" />
     </div>
   )
 }
@@ -88,13 +89,13 @@ function Transit({ trip, onDone, still }: { trip: TripNumbers; onDone: () => voi
       </div>
       <Counters trip={trip} maneuver={trip.depManeuver - trip.outbound * e} vital={trip.depVital - trip.vitalUsed * e} sunlight={100 / (au * au)} />
       {still ? (
-        <div className="jy-fact panel">
+        <div className="jy-fact surface-paper surface-paper--tape">
           <p>{t('jy.la.staticSub', { months: trip.months, outbound: trip.outbound, insertion: trip.insertion })}</p>
-          {[1, 2, 3].map(n => <p key={n}><b>💡 </b>{t(`jy.la.fact${n}`, { months: trip.months })}</p>)}
+          {[1, 2, 3].map(n => <p key={n}>{t(`jy.la.fact${n}`, { months: trip.months })}</p>)}
         </div>
       ) : (
-        <div key={fact} className="jy-fact panel">
-          <b className="jy-fact__did">💡 {t('jy.la.did')}</b>
+        <div key={fact} className="jy-fact surface-paper surface-paper--tilt-l">
+          <b className="jy-fact__did label"><Icon name="field-note" size={20} />{t('jy.la.did')}</b>
           <p>{t(`jy.la.fact${fact + 1}`, { months: trip.months })}</p>
           <span className="jy-fact__timer" aria-hidden />
         </div>

@@ -2,7 +2,8 @@
 import { useEffect } from 'react'
 import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
-import { Hud, LangSwitch } from '../../game/ui'
+import { Hud, LangSwitch, Squiggle } from '../../game/ui'
+import { Icon } from '../../game/icons'
 import { Earth, RingParticles, Saturn, SpaceBackdrop } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { LevelComplete } from './LevelComplete'
@@ -29,7 +30,7 @@ export function Departure() {
 
   return (
     <Stage className={`jy-de jy-de--b${beat}`} onSkip={brief ? undefined : () => setBeat(3)} bars={!brief} scroll={brief}>
-      <SpaceBackdrop fixed warp={beat === 2 ? 0.45 : brief ? 0.12 : 0} />
+      <SpaceBackdrop fixed warp={beat === 2 ? 0.45 : 0} />
       <div className="jy-de-saturn"><Saturn size="100%" tilt={22} roll={12} /></div>
       <div className="jy-de-rings"><RingParticles density={0.8} speed={burning ? 2.4 : 0.4} direction={4} /></div>
       <div className="jy-de-earth">
@@ -57,7 +58,7 @@ export function Departure() {
           <div className="jy-flash" aria-hidden />
           <div className="jy-card jy-card--low">
             <h1 className="jy-big jy-card__title jy-card__title--hot">{t('jy.de.ignite')}</h1>
-            <p className="jy-card__kicker">{t('jy.de.level')} — {t('jy.de.title')}</p>
+            <p className="jy-card__kicker">{t('jy.de.level')}: {t('jy.de.title')}</p>
           </div>
         </>
       )}
@@ -71,18 +72,20 @@ export function Departure() {
             <h1 className="jy-big jy-ar-intro__title">{t('jy.de.title')}</h1>
             <p className="jy-card__sub">{t('jy.de.subtitle')}</p>
           </header>
-          <section className="jy-report jy-report--wide panel" aria-labelledby="jy-de-summary">
+          <section className="jy-report jy-report--wide surface-paper surface-paper--tilt-l surface-paper--tape" aria-labelledby="jy-de-summary">
             <div className="jy-de-crew">
               <Porthole expression="determined" />
               <p className="jy-bubble">{t('jy.de.bye', { name })}</p>
             </div>
-            <h2 id="jy-de-summary" className="jy-report__title">🎒 {t('jy.de.summary')}</h2>
-            <Hud mission={mission} compact />
-            <p className="jy-de-text">{t('jy.de.remain', { maneuver: mission.maneuver, vital: mission.vital })}</p>
-            <p className="jy-de-text">🔬 {t('jy.de.science', { collected, total, sent })}</p>
-            <p className="jy-de-text jy-de-text--next">🧭 {t('jy.de.next')}</p>
-            <button className="btn btn--yellow jy-report__go" onClick={() => game.go('level3')}>{t('jy.de.go')} ▶</button>
+            <h2 id="jy-de-summary" className="paper-title squiggled"><Icon name="pack" size={26} /> {t('jy.de.summary')}<Squiggle /></h2>
+            <div className="surface-rows">
+              <p className="jy-de-text"><Icon name="maneuver" size={22} /><span>{t('jy.de.remain', { maneuver: mission.maneuver, vital: mission.vital })}</span></p>
+              <p className="jy-de-text"><Icon name="science" size={22} /><span>{t('jy.de.science', { collected, total, sent })}</span></p>
+              <p className="jy-de-text jy-de-text--next"><Icon name="route" size={22} /><span>{t('jy.de.next')}</span></p>
+            </div>
+            <button className="btn btn--yellow jy-report__go" onClick={() => game.go('level3')}>{t('jy.de.go')} <Icon name="go" size={20} /></button>
           </section>
+          <div className="jy-de-hud"><Hud mission={mission} /></div>
         </div>
       )}
     </Stage>

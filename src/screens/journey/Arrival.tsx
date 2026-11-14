@@ -2,7 +2,8 @@
 import { useEffect, type ReactNode } from 'react'
 import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
-import { Explain, LangSwitch } from '../../game/ui'
+import { Explain, LangSwitch, Squiggle } from '../../game/ui'
+import { Icon, type IconName } from '../../game/icons'
 import { RingParticles, Saturn, SpaceBackdrop } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { PARAMS } from '../../engine/data'
@@ -13,18 +14,18 @@ import { Porthole, Stage, tripNumbers, useBeats, useCommanderName, usePrefersRed
 const BEATS = [3200, 3400] as const
 
 function Row({ icon, label, from, to, max, children, tone, delay }: {
-  icon: string; label: string; from?: number; to: ReactNode; max?: number; children: ReactNode; tone: string; delay: number
+  icon: IconName; label: string; from?: number; to: ReactNode; max?: number; children: ReactNode; tone: string; delay: number
 }) {
   const t = useT()
   const hasBar = typeof from === 'number' && typeof to === 'number' && !!max
   return (
-    <li className="jy-row" style={{ ['--tone' as string]: tone, animationDelay: `${delay}s` }}>
-      <span className="jy-row__icon" aria-hidden>{icon}</span>
+    <li className="jy-row row" style={{ ['--tone' as string]: tone, animationDelay: `${delay}s` }}>
+      <span className="jy-row__icon"><Icon name={icon} size={26} /></span>
       <div className="jy-row__main">
         <div className="jy-row__top">
           <span className="jy-row__label">{label}</span>
           <span className="jy-row__vals">
-            {typeof from === 'number' && <><s title={t('jy.ar.atLaunch')}>{from}</s><i aria-hidden>→</i></>}
+            {typeof from === 'number' && <><s title={t('jy.ar.atLaunch')}>{from}</s><i aria-hidden><Icon name="go" size={12} /></i></>}
             <b>{to}</b>
           </span>
         </div>
@@ -83,29 +84,31 @@ export function Arrival() {
               <p className="jy-bubble">{t('jy.ar.hello', { name })}</p>
             </div>
           </header>
-          <section className="jy-report panel" aria-labelledby="jy-ar-report">
-            <h2 id="jy-ar-report" className="jy-report__title">📋 {t('jy.ar.report')}</h2>
-            <p className="jy-report__sub">{t('jy.ar.reportSub')}</p>
-            <ul className="jy-rows">
-              <Row icon="🗓️" label={t('jy.ar.time')} to={t('jy.ar.timeVal', { months: trip.months })} tone="#b9a2ff" delay={0.15}>
+          <div className="jy-ar-col">
+          <section className="jy-report surface-paper surface-paper--tilt-r surface-paper--tape" aria-labelledby="jy-ar-report">
+            <h2 id="jy-ar-report" className="paper-title squiggled"><Icon name="clipboard" size={26} /> {t('jy.ar.report')}<Squiggle /></h2>
+            <p className="fine jy-report__sub">{t('jy.ar.reportSub')}</p>
+            <ul className="jy-rows surface-rows">
+              <Row icon="calendar" label={t('jy.ar.time')} to={t('jy.ar.timeVal', { months: trip.months })} tone="var(--pink)" delay={0.15}>
                 {t('jy.ar.timeWhy')}
               </Row>
-              <Row icon="🚀" label={t('jy.ar.maneuver')} from={trip.depManeuver} to={trip.arrManeuver} max={trip.depManeuver} tone="var(--orange)" delay={0.35}>
+              <Row icon="maneuver" label={t('jy.ar.maneuver')} from={trip.depManeuver} to={trip.arrManeuver} max={trip.depManeuver} tone="var(--orange)" delay={0.35}>
                 {t('jy.ar.maneuverWhy', { outbound: trip.outbound, insertion: trip.insertion })}
               </Row>
-              <Row icon="🫁" label={t('jy.ar.vital')} from={trip.depVital} to={trip.arrVital} max={trip.depVital} tone="var(--teal)" delay={0.55}>
+              <Row icon="life-support" label={t('jy.ar.vital')} from={trip.depVital} to={trip.arrVital} max={trip.depVital} tone="var(--teal)" delay={0.55}>
                 {t(regen ? 'jy.ar.vitalWhyRegen' : 'jy.ar.vitalWhyCons', { used: trip.vitalUsed, other: trip.vitalUsedOther, crew: PARAMS.crew, months: trip.months })}
               </Row>
-              <Row icon="🛡️" label={t('jy.ar.hull')} to={`${mission.structure} / ${PARAMS.structureMax}`} tone="var(--green)" delay={0.75}>
+              <Row icon="hull" label={t('jy.ar.hull')} to={`${mission.structure} / ${PARAMS.structureMax}`} tone="var(--green)" delay={0.75}>
                 {t('jy.ar.hullWhy')}
               </Row>
-              <Row icon="📡" label={t('jy.ar.systems')} to={t('jy.ar.systemsVal')} tone="var(--yellow)" delay={0.95}>
+              <Row icon="antenna" label={t('jy.ar.systems')} to={t('jy.ar.systemsVal')} tone="var(--yellow)" delay={0.95}>
                 {t('jy.ar.systemsWhy')}
               </Row>
             </ul>
-            <Explain textKey="engine.launch.arrivedWhy" />
-            <button className="btn btn--yellow jy-report__go" onClick={() => game.go('level2')}>{t('jy.ar.go')} ▶</button>
           </section>
+          <Explain textKey="engine.launch.arrivedWhy" titleKey="jy.ar.note" />
+          <button className="btn btn--yellow jy-report__go" onClick={() => game.go('level2')}>{t('jy.ar.go')} <Icon name="go" size={20} /></button>
+          </div>
         </div>
       )}
     </Stage>

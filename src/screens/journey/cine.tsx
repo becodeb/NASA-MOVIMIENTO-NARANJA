@@ -5,6 +5,7 @@ import { usePrefersReducedMotion } from '../../art/worlds'
 import type { ShipConfig, ThrustMode } from '../../art/ships'
 import { Astronaut } from '../../avatar'
 import { useGame } from '../../game/store'
+import { Icon } from '../../game/icons'
 import { designReport } from '../../engine/engine'
 import { COMPONENTS, PARAMS } from '../../engine/data'
 import type { MissionState } from '../../engine/types'
@@ -81,7 +82,7 @@ export function Stage({ className = '', children, onSkip, skipLabel, bars = true
       <div className={`jy-bar jy-bar--bottom ${bars ? '' : 'is-off'}`} aria-hidden />
       {onSkip && (
         <button className="btn btn--metal jy-skip" onClick={onSkip}>
-          {skipLabel ?? t('common.skip')} <span className="jy-skip__key" aria-hidden>{t('jy.skipHint')}</span>
+          {skipLabel ?? t('common.skip')} <Icon name="skip" size={16} /><span className="jy-skip__key" aria-hidden>{t('jy.skipHint')}</span>
         </button>
       )}
     </div>

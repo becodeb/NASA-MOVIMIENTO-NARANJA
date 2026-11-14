@@ -1,9 +1,10 @@
-// Reusable "MISSION COMPLETE!" banner: badge, streaking stars, ship fly-by, 3-step progress bar.
+// Reusable level-cleared banner: badge, streaking stars, ship fly-by, three mission-patch stamps.
 // Fills its positioned parent (or the viewport with `fixed`). Pass `onContinue` to show a CONTINUE button.
 import type { ReactNode } from 'react'
 import { useT } from '../../i18n'
 import { useGame } from '../../game/store'
 import { Spaceship } from '../../art/ships'
+import { Icon } from '../../game/icons'
 import { DEFAULT_SHIP, thrustFor } from './cine'
 import './journey.css'
 
@@ -13,12 +14,13 @@ export interface LevelCompleteProps {
   onContinue?: () => void
   /** Cover the viewport instead of the positioned parent. */
   fixed?: boolean
-  /** Extra content under the progress bar (score, resources, short summary…). */
+  /** Extra content under the patches (score, resources, short summary…). */
   children?: ReactNode
   className?: string
 }
 
 const TONE = ['#38D9D0', '#FF8C32', '#65D68A'] as const
+const STAMP = ['', 'stamp--orange', 'stamp--green'] as const
 const INK = '#111326'
 
 // deterministic streaks: [top %, length vmin, delay s, duration s]
@@ -71,20 +73,22 @@ export function LevelComplete({ level, onContinue, fixed = false, children, clas
       </div>
       <div className="jy-lc__body">
         <Badge level={level} label={t('jy.lc.badge', { n: level })} />
-        <h2 className="jy-big jy-lc__title">{t('jy.lc.title')}</h2>
-        <p className="jy-lc__level">{t('jy.lc.level', { n: level })} · {t(`jy.lc.name${level}`)}</p>
-        <p className="jy-lc__quote">“{t('jy.lc.quote')}”</p>
-        <div className="jy-lc__progress" role="progressbar" aria-label={t('jy.lc.progress')} aria-valuemin={0} aria-valuemax={3} aria-valuenow={level}>
+        <h2 className="jy-big jy-lc__title">{level === 3 ? t('jy.lc.titleFinal') : t('jy.lc.title', { n: level })}</h2>
+        <p className="jy-lc__line">{t(`jy.lc.line${level}`)}</p>
+        <ul className="jy-lc__patches" aria-label={t('jy.lc.progress')}>
           {([1, 2, 3] as const).map(n => (
-            <div key={n} className={`jy-lc__step ${n <= level ? 'is-done' : ''} ${n === level ? 'is-new' : ''}`}>
-              <span className="jy-lc__track"><span className="jy-lc__fill" /></span>
-              <span className="jy-lc__name"><b>{n <= level ? '★' : n}</b> {t(`jy.lc.name${n}`)}</span>
-            </div>
+            <li key={n} className={`stamp ${n <= level ? STAMP[n - 1] : 'stamp--ghost'} ${n === level ? 'stamp-in jy-lc__patch--new' : ''}`} style={{ rotate: `${[-2.5, 1.5, -1][n - 1]}deg` }}>
+              {n <= level ? <Icon name="ok" size={18} /> : <span className="jy-lc__n">{n}</span>}
+              {t(`jy.lc.name${n}`)}
+            </li>
           ))}
-        </div>
-        <p className="jy-lc__unlock">{level < 3 ? `🔓 ${t('jy.lc.unlock', { n: level + 1 })}` : `🌍 ${t('jy.lc.final')}`}</p>
+        </ul>
+        <p className="jy-lc__unlock stamp stamp--yellow stamp--flat">
+          <Icon name={level < 3 ? 'unlock' : 'earth'} size={20} />
+          {level < 3 ? t('jy.lc.unlock', { n: level + 1 }) : t('jy.lc.final')}
+        </p>
         {children}
-        {onContinue && <button className="btn btn--yellow jy-lc__go" onClick={onContinue}>{t('common.continue')}</button>}
+        {onContinue && <button className="btn btn--yellow jy-lc__go" onClick={onContinue}>{t('common.continue')} <Icon name="go" size={20} /></button>}
       </div>
     </section>
   )
