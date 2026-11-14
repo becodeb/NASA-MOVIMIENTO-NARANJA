@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Mission Control — Progreso</title>
+<link rel="icon" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root { --space:#101B3D; --deep:#0A1128; --violet:#6637B8; --orange:#FF8C32; --yellow:#FFD447; --teal:#38D9D0;
+    --pink:#F46AA7; --white:#F5F7FF; --metal:#8896B3; --red:#F04452; --green:#65D68A; --ink:#111326; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; color:var(--white); font-family:Nunito,system-ui,sans-serif;
+    background: radial-gradient(ellipse at 80% 0%, #3b2378 0%, var(--space) 40%, var(--deep) 100%) fixed; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-family:'Lilita One',sans-serif; font-size: clamp(30px,6vw,52px); margin:0; color:var(--yellow);
+    -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; text-shadow: 0 4px 0 var(--ink); }
+  .sub { color: var(--metal); font-weight: 800; margin: 4px 0 20px; }
+  .card { background: rgba(16,27,61,.9); border:3px solid var(--ink); border-radius:20px; padding:18px;
+    box-shadow: 0 6px 0 var(--ink), inset 0 0 0 2px rgba(56,217,208,.25); margin-bottom: 18px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
+  .stat .k { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--metal); font-weight: 900; }
+  .stat .v { font-family:'Lilita One',sans-serif; font-size: 30px; }
+  .bar { height: 34px; border:3px solid var(--ink); border-radius: 999px; background:#0b1430; overflow:hidden; position:relative; }
+  .fill { height:100%; background: repeating-linear-gradient(-45deg, var(--orange) 0 18px, #ffa04f 18px 36px);
+    border-right: 3px solid var(--ink); transition: width .8s ease; animation: slide 1.2s linear infinite; background-size: 51px 100%; }
+  @keyframes slide { to { background-position: 51px 0; } }
+  .pct { position:absolute; inset:0; display:grid; place-items:center; font-family:'Lilita One',sans-serif; font-size:18px;
+    text-shadow: 0 2px 0 var(--ink); }
+  .timebar { margin-top:10px; height: 10px; border-radius: 999px; background:#0b1430; border:2px solid var(--ink); overflow:hidden; }
+  .timebar > div { height:100%; background: var(--teal); }
+  .verdict { display:inline-block; padding:8px 14px; border-radius:999px; border:3px solid var(--ink); font-weight:900; color: var(--ink); }
+  .ok { background: var(--green); } .warn { background: var(--yellow); } .bad { background: var(--red); color: var(--white); }
+  ul { list-style:none; padding:0; margin:0; }
+  .ms { display:flex; gap:12px; align-items:center; padding:10px 4px; border-bottom: 1px dashed rgba(136,150,179,.3); }
+  .ms:last-child { border-bottom: 0; }
+  .dot { width:26px; height:26px; flex:none; border-radius:50%; border:3px solid var(--ink); display:grid; place-items:center; font-weight:900; font-size:14px; color: var(--ink); }
+  .done .dot { background: var(--green); } .doing .dot { background: var(--yellow); animation: pulse 1.2s ease-in-out infinite; } .pending .dot { background: #2a3560; }
+  @keyframes pulse { 50% { transform: scale(1.15); } }
+  .ms .t { flex:1; font-weight:800; } .pending .t { color: var(--metal); }
+  .tag { font-size: 12px; font-weight:900; padding:2px 8px; border-radius: 999px; background: rgba(102,55,184,.6); border: 2px solid var(--ink); white-space: nowrap; }
+  .when { font-size:12px; color: var(--metal); white-space: nowrap; }
+  .note { padding: 12px; border-radius: 14px; border: 2px solid var(--ink); margin-bottom: 10px; background: rgba(10,17,40,.7); border-left: 8px solid var(--teal); }
+  .note.success { border-left-color: var(--green); } .note.warn { border-left-color: var(--yellow); } .note.error { border-left-color: var(--red); }
+  .note b { font-size: 16px; } .note p { margin: 4px 0 0; color: #d4dbf2; } .note small { color: var(--metal); font-weight: 800; }
+  h2 { font-family:'Lilita One',sans-serif; margin: 0 0 12px; font-weight: 400; color: var(--teal); }
+  a { color: var(--teal); }
+  @media (max-width: 560px) { .tag { display:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MISSION CONTROL</h1>
+  <p class="sub">Space Odyssey — Mission Saturn · progreso en vivo · <a href="/">abrir el juego</a></p>
+
+  <section class="card">
+    <div class="bar"><div class="fill" id="fill" style="width:0"></div><div class="pct" id="pct">0%</div></div>
+    <div class="timebar" title="Tiempo transcurrido hasta la entrega"><div id="tfill" style="width:0"></div></div>
+    <div class="grid" style="margin-top:16px">
+      <div class="stat"><div class="k">Entrega (producto listo)</div><div class="v" id="countdown">—</div></div>
+      <div class="stat"><div class="k">Hitos</div><div class="v" id="count">—</div></div>
+      <div class="stat"><div class="k">Proyección de fin</div><div class="v" id="eta">—</div></div>
+    </div>
+    <p style="margin:14px 0 0">¿Llegamos a las 16:00? <span class="verdict" id="verdict">calculando…</span></p>
+  </section>
+
+  <section class="card"><h2>Notificaciones</h2><div id="notes"></div></section>
+  <section class="card"><h2>Hitos</h2><ul id="list"></ul></section>
+  <p class="sub" id="updated"></p>
+</div>
+<script>
+const fmt = d => d.toLocaleString('es-AR', { weekday:'short', hour:'2-digit', minute:'2-digit', timeZone:'America/Argentina/Buenos_Aires' });
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let data = null;
+
+async function load() {
+  try {
+    const r = await fetch('/admin/progress.json?t=' + Date.now(), { cache: 'no-store' });
+    data = await r.json();
+    render();
+  } catch (e) { document.getElementById('updated').textContent = 'No se pudo leer el progreso: ' + e.message; }
+}
+
+function render() {
+  if (!data) return;
+  const ms = data.milestones, now = Date.now();
+  const total = ms.reduce((a, m) => a + m.weight, 0);
+  const done = ms.filter(m => m.status === 'done').reduce((a, m) => a + m.weight, 0)
+             + ms.filter(m => m.status === 'doing').reduce((a, m) => a + m.weight * 0.4, 0);
+  const pct = Math.round(done / total * 100);
+  document.getElementById('fill').style.width = pct + '%';
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('count').textContent = ms.filter(m => m.status === 'done').length + ' / ' + ms.length;
+
+  const start = new Date(data.start).getTime(), dl = new Date(data.deadline).getTime();
+  const tpct = Math.min(100, Math.max(0, (now - start) / (dl - start) * 100));
+  document.getElementById('tfill').style.width = tpct + '%';
+  const left = dl - now;
+  const h = Math.floor(Math.abs(left) / 3.6e6), m = Math.floor(Math.abs(left) % 3.6e6 / 6e4);
+  document.getElementById('countdown').textContent = left > 0 ? `faltan ${h}h ${m}m` : `vencida hace ${h}h ${m}m`;
+
+  // Projection: work rate so far (weight per ms), with a floor so early estimates aren't absurd.
+  const elapsed = Math.max(now - start, 30 * 6e4);
+  const rate = done / elapsed;
+  const v = document.getElementById('verdict');
+  if (pct >= 100) { document.getElementById('eta').textContent = 'terminado'; v.textContent = '¡Sí! Terminado ✔'; v.className = 'verdict ok'; return list(); }
+  const eta = rate > 0 ? now + (total - done) / rate : Infinity;
+  document.getElementById('eta').textContent = isFinite(eta) ? fmt(new Date(eta)) : '—';
+  const margin = (dl - eta) / 3.6e6;
+  if (margin >= 1) { v.textContent = `Sí, con ${margin.toFixed(1)} h de margen`; v.className = 'verdict ok'; }
+  else if (margin >= -1) { v.textContent = 'Justo — al límite'; v.className = 'verdict warn'; }
+  else { v.textContent = `En riesgo (${(-margin).toFixed(1)} h tarde al ritmo actual)`; v.className = 'verdict bad'; }
+  list();
+}
+
+function list() {
+  document.getElementById('list').innerHTML = data.milestones.map((m, i) => `
+    <li class="ms ${m.status}"><span class="dot">${m.status === 'done' ? '✓' : i + 1}</span>
+      <span class="t">${esc(m.title)}</span><span class="tag">${esc(m.model || '')}</span>
+      <span class="when">${m.doneAt ? fmt(new Date(m.doneAt)) : m.status === 'doing' ? 'en curso' : ''}</span></li>`).join('');
+  document.getElementById('notes').innerHTML = [...data.notifications].reverse().map(n => `
+    <div class="note ${esc(n.level || '')}"><small>${fmt(new Date(n.at))}</small><br><b>${esc(n.title)}</b><p>${esc(n.body)}</p></div>`).join('');
+  document.getElementById('updated').textContent = 'Actualizado: ' + fmt(new Date()) + ' · se refresca solo cada minuto';
+}
+
+load();
+setInterval(load, 60000);
+setInterval(render, 15000);
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "project": "Space Odyssey — Mission Saturn",
+  "start": "2026-11-14T15:56:00-03:00",
+  "deadline": "2026-11-15T16:00:00-03:00",
+  "nasaDeadline": "2026-11-15T23:59:00-03:00",
+  "milestones": [
+    { "id": "base", "title": "Base online + panel admin", "weight": 3, "status": "done", "doneAt": "2026-11-14T16:40:00-03:00", "model": "Opus" },
+    { "id": "engine", "title": "Motor de reglas de la misión (valores del documento) + tests", "weight": 8, "status": "pending", "model": "Sonnet" },
+    { "id": "worlds", "title": "Galaxia y mundos: Saturno, anillos, Titán, Encélado, Tierra", "weight": 9, "status": "pending", "model": "Fable" },
+    { "id": "ships", "title": "Naves: nave modular, cohete de lanzamiento, cápsula de reentrada", "weight": 9, "status": "pending", "model": "Fable" },
+    { "id": "avatar", "title": "Creador de astronauta (cara, ojos, pelo, piel, traje)", "weight": 6, "status": "pending", "model": "Fable" },
+    { "id": "intro", "title": "Menú principal, intro de la misión e idiomas (EN/ES)", "weight": 5, "status": "pending", "model": "Sonnet" },
+    { "id": "level1", "title": "Nivel 1 — Construí tu nave (5 sistemas, informe de ingeniería)", "weight": 10, "status": "pending", "model": "Sonnet" },
+    { "id": "transit", "title": "Lanzamiento y viaje de ida a Saturno (48 meses)", "weight": 5, "status": "pending", "model": "Fable" },
+    { "id": "level2", "title": "Nivel 2 — Saturno: 6 emergencias + 4 investigaciones", "weight": 12, "status": "pending", "model": "Sonnet" },
+    { "id": "level3", "title": "Nivel 3 — Regreso: Titán, rutas y reentrada", "weight": 10, "status": "pending", "model": "Sonnet" },
+    { "id": "report", "title": "Reporte final y puntaje (100 pts)", "weight": 5, "status": "pending", "model": "Sonnet" },
+    { "id": "i18n", "title": "Traducciones PT-BR y FR", "weight": 3, "status": "pending", "model": "Haiku" },
+    { "id": "polish", "title": "Pulido: sonido, celular, accesibilidad, QA completo", "weight": 6, "status": "pending", "model": "Opus" },
+    { "id": "video", "title": "Video demo ≤30 s con subtítulos en inglés", "weight": 7, "status": "pending", "model": "Opus + Fable" },
+    { "id": "submit", "title": "Materiales de envío en inglés (descripción, referencias)", "weight": 2, "status": "pending", "model": "Sonnet" }
+  ],
+  "notifications": [
+    { "at": "2026-11-14T16:40:00-03:00", "level": "success", "title": "Base online", "body": "nasa.becode.com.ar responde con la base del juego y este panel. Arrancan en paralelo motor, mundos, naves y avatar." }
+  ]
+}
