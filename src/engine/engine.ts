@@ -918,7 +918,9 @@ export function resolveEmergency(state: MissionState, id: EmergencyId, optionId:
     closeMonth(s, id, applied.close, applied.skipDraw === true, params)
     closed = true
   }
-  const msgKey = `engine.out.${id}.${optionId}`
+  const msgKey = id === 'power' && optionId === 'isolate' && applied.params.blackout === true
+    ? 'engine.out.power.isolateLate'
+    : `engine.out.${id}.${optionId}`
   const next = commit(state, s, 'emergency', msgKey, params, applied.success)
   return { state: next, outcome: { success: applied.success, msgKey, params, explanationKey: `engine.expl.${id}.${optionId}`, closed } }
 }
@@ -1022,7 +1024,7 @@ export function routeOptions(state: MissionState, useTitan: boolean): RouteOptio
     if (state.maneuver < maneuverNeeded)
       failing.push({
         variable: 'maneuver',
-        msgKey: 'engine.route.fail.maneuver',
+        msgKey: useTitan ? 'engine.route.fail.maneuver' : 'engine.route.fail.maneuverNoTitan',
         params: { have: state.maneuver, need: maneuverNeeded, short: maneuverNeeded - state.maneuver, route: eff, reserve: PARAMS.minManeuverReserve, prep: useTitan ? PARAMS.titanPrep : 0 },
       })
     if (state.vital < vitalNeeded)
@@ -1168,7 +1170,8 @@ function scoreInternal(s: MissionState): ScoreBreakdown {
   if (s.emergencies.impact.status === 'unresolved' || s.faults.leak === 'open') hab -= 4
   else if (s.emergencies.impact.choice === 'isolateLate') hab -= 1
   if (s.faults.blackout) hab -= 2
-  hab = Math.max(0, hab)
+  // A lost crew means habitability was not maintained, whatever happened earlier.
+  hab = s.crewStatus === 'lost' ? 0 : Math.max(0, hab)
   let protocol = 0
   if (s.flags.shelterUsed) protocol += 3
   if (s.flags.impactPrompt) protocol += 1
@@ -1184,8 +1187,9 @@ function scoreInternal(s: MissionState): ScoreBreakdown {
   for (const i of INVESTIGATION_ORDER) per[i] = s.science.collected[i] && (safeReturn || s.science.transmitted[i]) ? SCORE.perInvestigation : 0
   const sci = INVESTIGATION_ORDER.reduce((a, i) => a + per[i], 0)
   // --- resources (15)
-  const vitalPts = Math.round(Math.min(1, s.vital / PARAMS.minVitalReserve) * SCORE.resVital)
-  const manPts = Math.round(Math.min(1, s.maneuver / PARAMS.minManeuverReserve) * SCORE.resManeuver)
+  // Reserves are judged at the end of the return (spec 9D): without a completed return they earn nothing.
+  const vitalPts = safeReturn ? Math.round(Math.min(1, s.vital / PARAMS.minVitalReserve) * SCORE.resVital) : 0
+  const manPts = safeReturn ? Math.round(Math.min(1, s.maneuver / PARAMS.minManeuverReserve) * SCORE.resManeuver) : 0
   const energyMat = (s.faults.blackout ? 0 : SCORE.resEnergy) + Math.max(0, SCORE.resMaterials - s.flags.sparesHoarded)
   const crewTotal = retPts + hab + protocol
   const shipTotal = structural + essentials + capsule
