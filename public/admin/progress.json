@@ -71,8 +71,9 @@
       "id": "level2",
       "title": "Nivel 2 — Saturno: 6 emergencias + 4 investigaciones",
       "weight": 12,
-      "status": "doing",
-      "model": "Sonnet"
+      "status": "done",
+      "model": "Sonnet",
+      "doneAt": "2026-11-14T16:40:00-03:00"
     },
     {
       "id": "level3",
@@ -171,6 +172,12 @@
       "level": "success",
       "title": "Menú y Nivel 1 jugables",
       "body": "Ya se puede entrar al juego: menú con Saturno y tu astronauta, intro de la misión, creador de avatar, instrucciones con glosario y el Nivel 1 completo (armar la nave con presupuesto, masa y energía; si te pasás de presupuesto no podés despegar)."
+    },
+    {
+      "at": "2026-11-14T16:40:00-03:00",
+      "level": "success",
+      "title": "Nivel 2 jugable: Saturno",
+      "body": "Seis meses en órbita de Saturno con las 6 emergencias (antena, micrometeorito, CO2, falla eléctrica, frío, radiación), alarmas, reacciones del astronauta y 4 investigaciones científicas. Las opciones dependen de cómo armaste la nave en el Nivel 1."
     }
   ]
 }
