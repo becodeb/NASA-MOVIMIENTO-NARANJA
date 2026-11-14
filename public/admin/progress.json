@@ -48,15 +48,17 @@
       "id": "intro",
       "title": "Menú principal, intro de la misión e idiomas (EN/ES)",
       "weight": 5,
-      "status": "doing",
-      "model": "Sonnet"
+      "status": "done",
+      "model": "Sonnet",
+      "doneAt": "2026-11-14T16:34:37-03:00"
     },
     {
       "id": "level1",
       "title": "Nivel 1 — Construí tu nave (5 sistemas, informe de ingeniería)",
       "weight": 10,
-      "status": "doing",
-      "model": "Sonnet"
+      "status": "done",
+      "model": "Sonnet",
+      "doneAt": "2026-11-14T16:34:37-03:00"
     },
     {
       "id": "transit",
@@ -163,6 +165,12 @@
       "level": "info",
       "title": "Video en producción",
       "body": "Tráiler de 30 s con subtítulos en inglés armado con el arte del juego, y música original ya compuesta."
+    },
+    {
+      "at": "2026-11-14T16:34:37-03:00",
+      "level": "success",
+      "title": "Menú y Nivel 1 jugables",
+      "body": "Ya se puede entrar al juego: menú con Saturno y tu astronauta, intro de la misión, creador de avatar, instrucciones con glosario y el Nivel 1 completo (armar la nave con presupuesto, masa y energía; si te pasás de presupuesto no podés despegar)."
     }
   ]
 }
