@@ -37,8 +37,9 @@
       "id": "avatar",
       "title": "Creador de astronauta (cara, ojos, pelo, piel, traje)",
       "weight": 6,
-      "status": "doing",
-      "model": "Fable"
+      "status": "done",
+      "model": "Fable",
+      "doneAt": "2026-11-14T16:45:00-03:00"
     },
     {
       "id": "intro",
@@ -117,6 +118,18 @@
       "level": "success",
       "title": "Base online",
       "body": "nasa.becode.com.ar responde con la base del juego y este panel. Arrancan en paralelo motor, mundos, naves y avatar."
+    },
+    {
+      "at": "2026-11-14T16:44:00-03:00",
+      "level": "info",
+      "title": "Reporte por mail activado",
+      "body": "Se envió el mail de prueba; a partir de ahora sale un reporte cada hora."
+    },
+    {
+      "at": "2026-11-14T16:45:00-03:00",
+      "level": "success",
+      "title": "Creador de astronauta listo",
+      "body": "Cara, ojos, nariz, boca, cejas, orejas, pelo, piel, traje, casco, guantes y accesorios, con poses y expresiones. Vista previa: nasa.becode.com.ar/?preview=avatar"
     }
   ]
 }
