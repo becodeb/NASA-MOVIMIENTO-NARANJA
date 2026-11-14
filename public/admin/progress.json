@@ -64,8 +64,9 @@
       "id": "transit",
       "title": "Lanzamiento y viaje de ida a Saturno (48 meses)",
       "weight": 5,
-      "status": "doing",
-      "model": "Fable"
+      "status": "done",
+      "model": "Fable",
+      "doneAt": "2026-11-14T16:40:17-03:00"
     },
     {
       "id": "level2",
@@ -178,6 +179,12 @@
       "level": "success",
       "title": "Nivel 2 jugable: Saturno",
       "body": "Seis meses en órbita de Saturno con las 6 emergencias (antena, micrometeorito, CO2, falla eléctrica, frío, radiación), alarmas, reacciones del astronauta y 4 investigaciones científicas. Las opciones dependen de cómo armaste la nave en el Nivel 1."
+    },
+    {
+      "at": "2026-11-14T16:40:17-03:00",
+      "level": "success",
+      "title": "Cinemáticas listas",
+      "body": "Intro de título (de la Tierra a Saturno), despegue del cohete, viaje de 4 años con el mapa del sistema solar, maniobra de entrada en órbita, informe de llegada y la partida de regreso. Todas se pueden saltear."
     }
   ]
 }
