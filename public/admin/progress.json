@@ -104,8 +104,9 @@
       "id": "polish",
       "title": "Pulido: sonido, celular, accesibilidad, QA completo",
       "weight": 6,
-      "status": "doing",
-      "model": "Opus"
+      "status": "done",
+      "model": "Opus",
+      "doneAt": "2026-11-14T18:16:57-03:00"
     },
     {
       "id": "video",
@@ -214,6 +215,12 @@
       "level": "info",
       "title": "Pulido de diseño aplicado",
       "body": "Se reemplazaron todos los emojis por un set de 88 íconos dibujados con el estilo del juego, se reescribieron textos genéricos en los 4 idiomas y los avisos ya no tapan botones en el celular."
+    },
+    {
+      "at": "2026-11-14T18:16:57-03:00",
+      "level": "success",
+      "title": "Pulido y pruebas completas",
+      "body": "Se corrigieron todos los detalles de la prueba completa: los avisos ya no tapan botones, las frases del astronauta coinciden con lo que pasa, los meses se entienden ('mes 1 de 6 en Saturno'), la barra de recursos queda visible en emergencias y hay una pista de la asistencia de Titán. El juego está terminado."
     }
   ]
 }
