@@ -3,16 +3,19 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useT } from '../../i18n'
 import { game, getGame, useGame } from '../../game/store'
 import { Explain, Hud, Meter, ScreenFrame } from '../../game/ui'
+import { Icon, type IconName } from '../../game/icons'
 import { executeReturn, routeOptions, titanAvailability } from '../../engine/engine'
 import { PARAMS, ROUTES } from '../../engine/data'
 import type { ActionResult, MissionState, RouteId, RouteOption } from '../../engine/types'
 import { Saturn, SolarSystemMap, SpaceBackdrop, Titan, usePrefersReducedMotion, type MapRoute } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { drainers, r1, useTP } from './helpers'
+import { Hint, LevelStamp, Line } from './parts'
 import './level3.css'
 
 const ROUTE_IDS: RouteId[] = ['fast', 'balanced', 'slow']
 const ROUTE_COLOR: Record<RouteId, string> = { fast: '#F46AA7', balanced: '#38D9D0', slow: '#FFD447' }
+const ROUTE_ICON: Record<RouteId, IconName> = { fast: 'maneuver', balanced: 'route', slow: 'calendar' }
 
 function Bar({ have, need, ok }: { have: number; need: number; ok: boolean }) {
   const pct = Math.max(0, Math.min(100, (have / Math.max(1, need)) * 100))
@@ -35,15 +38,16 @@ function RouteCard({ o, selected, onPick, mission }: { o: RouteOption; selected:
       aria-checked={selected}
       aria-disabled={!o.feasible}
       tabIndex={0}
-      className={`l3-card ${selected ? 'is-selected' : ''} ${o.feasible ? '' : 'is-blocked'}`}
+      className={`l3-card l3-card--${o.id} ${selected ? 'is-selected' : ''} ${o.feasible ? '' : 'is-blocked'}`}
       style={{ '--rc': ROUTE_COLOR[o.id] } as React.CSSProperties}
       onClick={() => o.feasible && onPick()}
       onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && o.feasible) { e.preventDefault(); onPick() } }}
     >
+      {selected && <span className="l3-card__pick stamp-in" aria-hidden><Icon name="ok" size={30} /></span>}
       <div className="l3-card__head">
-        <span className="l3-card__dot" />
+        <Icon name={ROUTE_ICON[o.id]} size={26} />
         <h3>{t(`l3.route.${o.id}.name`)}</h3>
-        <span className={`l3-tag ${o.feasible ? 'is-ok' : 'is-bad'}`}>{o.feasible ? t('l3.card.ok') : t('l3.card.blocked')}</span>
+        <span className={`stamp stamp--flat l3-tag ${o.feasible ? 'stamp--green' : 'stamp--red'}`}>{o.feasible ? t('l3.card.ok') : t('l3.card.blocked')}</span>
       </div>
       <p className="l3-card__desc">{t(`l3.route.${o.id}.desc`)}</p>
       <dl className="l3-card__rows">
@@ -63,15 +67,14 @@ function RouteCard({ o, selected, onPick, mission }: { o: RouteOption; selected:
         <div>
           <dt>{t('l3.card.after')}</dt>
           <dd>
-            <span className={o.maneuverAfter < PARAMS.minManeuverReserve ? 'l3-bad' : ''}>🚀 {r1(o.maneuverAfter)}</span>
-            {' · '}
-            <span className={o.vitalAfter < PARAMS.minVitalReserve ? 'l3-bad' : ''}>🫁 {r1(o.vitalAfter)}</span>
+            <span className={`l3-after ${o.maneuverAfter < PARAMS.minManeuverReserve ? 'l3-bad' : ''}`}><Icon name="maneuver" size={18} /> {r1(o.maneuverAfter)}</span>
+            <span className={`l3-after ${o.vitalAfter < PARAMS.minVitalReserve ? 'l3-bad' : ''}`}><Icon name="life-support" size={18} /> {r1(o.vitalAfter)}</span>
           </dd>
         </div>
       </dl>
       {!o.feasible && (
         <ul className="l3-card__fails">
-          {o.failing.map(f => <li key={f.variable + f.msgKey}>⚠️ {tp(f.msgKey, f.params)}</li>)}
+          {o.failing.map(f => <li key={f.variable + f.msgKey}><Icon name="warning" size={18} />{tp(f.msgKey, f.params)}</li>)}
         </ul>
       )}
     </div>
@@ -159,6 +162,7 @@ export function Level3() {
       <ScreenFrame title={t('l3.title')} subtitle={t('l3.transit.sub')}>
         <SpaceBackdrop fixed warp={done ? 0 : 0.35} />
         <div className="l3-wrap">
+          <LevelStamp />
           <Hud mission={live} compact />
           <section className="panel l3-stage l3-transit">
             <div className="l3-transit__map">
@@ -171,8 +175,8 @@ export function Level3() {
               </div>
               <div className="l3-ship"><Spaceship config={mission.config} thrust={prog < 0.12 ? (mission.config.propulsion === 'combined' ? 'both' : 'chemical') : mission.config.propulsion === 'combined' ? 'ion' : 'off'} width="100%" title="ship" /></div>
               <p className="l3-log" aria-live="polite">{t(transitLog(prog, mission.titanAssist))}</p>
-              <Meter icon="🚀" label={t('hud.maneuver')} value={live.maneuver} max={115} warnBelow={40} dangerBelow={20} />
-              <Meter icon="🫁" label={t('hud.vital')} value={live.vital} max={130} warnBelow={40} dangerBelow={16} />
+              <Meter icon="maneuver" tone="orange" label={t('hud.maneuver')} value={live.maneuver} max={115} warnBelow={40} dangerBelow={20} />
+              <Meter icon="life-support" tone="teal" label={t('hud.vital')} value={live.vital} max={130} warnBelow={40} dangerBelow={16} />
               {!done && <button className="btn btn--metal" onClick={() => { cancelAnimationFrame(raf.current); setP(1) }}>{t('common.skip')}</button>}
             </div>
           </section>
@@ -180,9 +184,9 @@ export function Level3() {
             <section className="panel l3-stage l3-done">
               <h2 className="l3-h2">{t('l3.transit.done')}</h2>
               <p>{transit ? tp(transit.result.msgKey, transit.result.params) : t('l3.transit.doneSaved')}</p>
-              {transit?.result.explanationKey && <Explain textKey={transit.result.explanationKey} />}
+              {transit?.result.explanationKey && <Explain titleKey="l3.transit.note" textKey={transit.result.explanationKey} />}
               <p className="l3-note">{t('l3.transit.next')}</p>
-              <button className="btn btn--yellow l3-go" onClick={() => game.go('reentry')}>{t('l3.transit.cta')} ▶</button>
+              <button className="btn btn--yellow l3-go" onClick={() => game.go('reentry')}>{t('l3.transit.cta')} <Icon name="go" size={20} /></button>
             </section>
           )}
         </div>
@@ -213,10 +217,11 @@ export function Level3() {
     <ScreenFrame title={t('l3.title')} subtitle={t('l3.sub')}>
       <SpaceBackdrop fixed />
       <div className="l3-wrap">
+        <LevelStamp />
         <Hud mission={mission} compact />
 
         {/* ---- stage 1 */}
-        <section className="panel l3-stage" aria-labelledby="l3-s1">
+        <section className="panel l3-stage l3-stage--s1" aria-labelledby="l3-s1">
           <header className="l3-stage__head"><span className="l3-num">1</span><h2 id="l3-s1" className="l3-h2">{t('l3.s1.title')}</h2></header>
           <div className="l3-s1">
             <div className="l3-s1__art" aria-hidden>
@@ -237,13 +242,13 @@ export function Level3() {
                   <b>{t('l3.s1.direct')}</b><span>{t('l3.s1.direct.d')}</span>
                 </button>
                 <button role="radio" aria-checked={titanOn} aria-disabled={!av?.available} disabled={!av?.available} className={`l3-opt ${titanOn ? 'is-on' : ''}`} onClick={() => setWantTitan(true)}>
-                  <b>🪐 {t('l3.s1.assist')}</b><span>{t('l3.s1.assist.d')}</span>
+                  <b><Icon name="gravity-assist" size={22} /> {t('l3.s1.assist')}</b><span>{t('l3.s1.assist.d')}</span>
                 </button>
               </div>
-              {av && !av.available && av.reasonKey && <div className="l3-warn" role="alert">🔒 {tp(av.reasonKey, av.params)}</div>}
-              {titanOn && <div className="l3-note">🧭 {t('l3.s1.geometry')}</div>}
-              {titanBackfires && <div className="l3-warn" role="alert">⚠️ {t('l3.s1.backfire')}</div>}
-              <Explain textKey="l3.s1.why" />
+              {av && !av.available && av.reasonKey && <Line kind="warn" role="alert" icon="lock">{tp(av.reasonKey, av.params)}</Line>}
+              {titanOn && <Line icon="route">{t('l3.s1.geometry')}</Line>}
+              {titanBackfires && <Line kind="warn" role="alert" icon="warning">{t('l3.s1.backfire')}</Line>}
+              <Explain titleKey="l3.s1.note" textKey="l3.s1.why" />
             </div>
           </div>
         </section>
@@ -259,15 +264,15 @@ export function Level3() {
           <div className="l3-cards" role="radiogroup" aria-label={t('l3.s2.title')}>
             {opts.map(o => <RouteCard key={o.id} o={o} mission={mission} selected={sel === o.id && o.feasible} onPick={() => setSel(o.id)} />)}
           </div>
-          {easy && <div className="l3-note">💡 {t('l3.s2.hint')}</div>}
-          <Explain textKey="l3.s2.why" />
+          {easy && <Hint>{t('l3.s2.hint')}</Hint>}
+          <Explain titleKey="l3.s2.note" textKey="l3.s2.why" />
           <div className="l3-confirm">
             <p className="l3-confirm__txt">
               {chosen
                 ? t('l3.confirm.preview', { route: t(`l3.route.${chosen.id}.name`), months: chosen.months, man: r1(chosen.maneuverAfter), vit: r1(chosen.vitalAfter) })
                 : t('l3.confirm.pick')}
             </p>
-            <button className="btn btn--orange l3-go" disabled={!chosen} onClick={confirm}>{t('l3.confirm.cta')} 🚀</button>
+            <button className="btn btn--orange l3-go" disabled={!chosen} onClick={confirm}>{t('l3.confirm.cta')} <Icon name="go" size={20} /></button>
           </div>
         </section>
       </div>
@@ -302,12 +307,13 @@ function DeadEnd({ mission, checkpoints }: { mission: MissionState; checkpoints:
     <ScreenFrame title={t('l3.title')} subtitle={t('l3.dead.sub')} alarm>
       <SpaceBackdrop fixed tint="alarm" />
       <div className="l3-wrap">
+        <LevelStamp />
         <Hud mission={mission} compact />
         <section className="panel l3-stage l3-dead">
-          <h2 className="l3-h2">🛑 {t('l3.dead.title')}</h2>
+          <h2 className="l3-h2 l3-h2--icon"><Icon name="stop" size={30} />{t('l3.dead.title')}</h2>
           <p>{t('l3.dead.intro')}</p>
           <h3>{t('l3.dead.what')}</h3>
-          <ul className="l3-card__fails">{[...vars.entries()].map(([k, v]) => <li key={k}>⚠️ {tp(v.msgKey, v.params)}</li>)}</ul>
+          <ul className="l3-card__fails">{[...vars.entries()].map(([k, v]) => <li key={k}><Icon name="warning" size={18} />{tp(v.msgKey, v.params)}</li>)}</ul>
           <h3>{t('l3.dead.why')}</h3>
           {causeFields.length === 0 && <p>{t('l3.dead.lesson.other')}</p>}
           {causeFields.map(f => (
@@ -315,14 +321,14 @@ function DeadEnd({ mission, checkpoints }: { mission: MissionState; checkpoints:
               <p><b>{t(`l3.dead.lesson.${f}`)}</b></p>
               <ul>
                 {drainers(mission.history, f).map(({ entry, score }) => (
-                  <li key={entry.seq}><span className="l3-chip">{t('l3.month', { m: entry.month })}</span> {tp(entry.key, entry.params)} <b className="l3-bad">−{r1(score)}</b></li>
+                  <li key={entry.seq}><span className="chip">{t('l3.month', { m: entry.month })}</span> {tp(entry.key, entry.params)} <b className="l3-bad">−{r1(score)}</b></li>
                 ))}
               </ul>
             </div>
           ))}
           <p className="l3-note">{t('l3.dead.rule')}</p>
           <div className="l3-actions">
-            {restorable && <button className="btn btn--green" onClick={restore}>↩ {t('common.restore')}</button>}
+            {restorable && <button className="btn btn--green" onClick={restore}><Icon name="undo" size={20} /> {t('common.restore')}</button>}
             <button className="btn btn--yellow" onClick={() => game.restart()}>{t('common.retry')}</button>
             <button className="btn btn--metal" onClick={() => game.go('report')}>{t('l3.dead.report')}</button>
           </div>

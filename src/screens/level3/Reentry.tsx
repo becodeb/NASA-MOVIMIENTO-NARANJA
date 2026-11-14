@@ -3,12 +3,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
 import { Explain, ScreenFrame } from '../../game/ui'
+import { Icon } from '../../game/icons'
 import { reentryStep } from '../../engine/engine'
 import type { Params, ReentryCorridor, ReentryStepId } from '../../engine/types'
 import { SpaceBackdrop, usePrefersReducedMotion } from '../../art/worlds'
 import { ReentryCapsule, type ReentryPhase } from '../../art/ships'
 import { Astronaut } from '../../avatar'
 import { useTP } from './helpers'
+import { Hint, LevelStamp } from './parts'
 import './level3.css'
 
 const ORDER: ReentryStepId[] = ['capsuleCheck', 'corridor', 'separation', 'parachutes', 'landing']
@@ -41,7 +43,7 @@ function CorridorDiagram({ kind, uid }: { kind: ReentryCorridor; uid: string }) 
         <path d="M40,130 q30,-14 60,-8 q24,6 40,-2 L140,130 Z" fill="#65D68A" opacity=".85" />
         <path d={path} fill="none" stroke="#F5F7FF" strokeWidth="3" strokeDasharray="7 5" strokeLinecap="round" />
         <circle cx={end[0]} cy={end[1]} r="5" fill="#FF8C32" stroke="#111326" strokeWidth="2" />
-        <text x="196" y="16" textAnchor="end" fill="#B9C4DC" fontSize="9" fontWeight="800">▲ SPACE</text>
+        <text x="196" y="16" textAnchor="end" fill="#B9C4DC" fontSize="9" fontWeight="800">SPACE</text>
         <text x="196" y="86" textAnchor="end" fill="#DFF6FF" fontSize="8" fontWeight="800">ATMOSPHERE</text>
       </g>
     </svg>
@@ -127,12 +129,13 @@ export function Reentry() {
 
   return (
     <ScreenFrame title={t('l3.re.title')} subtitle={t('l3.re.sub')} alarm={failed}>
-      <SpaceBackdrop fixed tint={failed ? 'alarm' : 'calm'} warp={step === 'corridor' && !corridor ? 0.2 : 0} />
+      <SpaceBackdrop fixed tint={failed ? 'alarm' : 'calm'} warp={0} />
       <div className={`l3-wrap l3-re ${shake ? 'l3-shake' : ''}`}>
+        <LevelStamp />
         <ol className="l3-stepper" aria-label={t('l3.re.title')}>
           {ORDER.map((s, i) => {
             const st = mission.reentry.done.includes(s) ? 'done' : failed && s === step ? 'fail' : s === step ? 'now' : 'todo'
-            return <li key={s} className={`l3-stepper__i is-${st}`} aria-current={st === 'now' ? 'step' : undefined}><span>{st === 'done' ? '✓' : st === 'fail' ? '✗' : i + 1}</span><em>{t(`l3.step.${s}.name`)}</em></li>
+            return <li key={s} className={`l3-stepper__i is-${st}`} aria-current={st === 'now' ? 'step' : undefined}><span>{st === 'done' ? <Icon name="ok" size={20} /> : st === 'fail' ? <Icon name="fail" size={20} /> : i + 1}</span><em>{t(`l3.step.${s}.name`)}</em></li>
           })}
         </ol>
 
@@ -144,20 +147,20 @@ export function Reentry() {
           <div className="l3-re__side">
             {fb && !failed && (
               <div className={`l3-fb ${fb.ok ? 'is-ok' : 'is-bad'}`} role="status">
-                <b>{fb.ok ? '✅' : '⚠️'} {tp(fb.key, fb.params)}</b>
+                <b><Icon name={fb.ok ? 'ok' : 'warning'} size={22} /> {tp(fb.key, fb.params)}</b>
                 {fb.expl && <p>{tp(fb.expl, fb.params)}</p>}
               </div>
             )}
 
             {failed && (
               <section className="panel l3-stage l3-fail" role="alert">
-                <h2 className="l3-h2">💥 {t('l3.re.fail.title')}</h2>
+                <h2 className="l3-h2 l3-h2--icon"><Icon name="burst" size={32} />{t('l3.re.fail.title')}</h2>
                 <p><b>{tp(mission.reentry.failureKey ?? 'engine.reentry.notReady', { step: step ?? 'corridor' })}</b></p>
                 <p>{tp(`${mission.reentry.failureKey}.why`)}</p>
                 <p className="l3-note">{t('l3.re.fail.after')}</p>
                 <div className="l3-actions">
                   <button className="btn btn--red" onClick={() => game.go('report')}>{t('l3.re.fail.report')}</button>
-                  {game.canRestore() && <button className="btn btn--green" onClick={() => game.restore()}>↩ {t('common.restore')}</button>}
+                  {game.canRestore() && <button className="btn btn--green" onClick={() => game.restore()}><Icon name="undo" size={20} /> {t('common.restore')}</button>}
                 </div>
               </section>
             )}
@@ -173,7 +176,7 @@ export function Reentry() {
                       {checks.map(c => {
                         const bad = sysCapsule === 'failed'
                         const half = sysCapsule === 'degraded'
-                        return <li key={c} className={bad ? 'is-bad' : half ? 'is-warn' : 'is-ok'}>{bad ? '❌' : half ? '⚠️' : '✅'} {t(`l3.check.${c}`)}</li>
+                        return <li key={c} className={bad ? 'is-bad' : half ? 'is-warn' : 'is-ok'}><Icon name={bad ? 'fail' : half ? 'warning' : 'ok'} size={22} /> {t(`l3.check.${c}`)}</li>
                       })}
                     </ul>
                     <p className="l3-note">{t('l3.check.status', { status: t(`l3.status.${sysCapsule}`) })}</p>
@@ -192,14 +195,14 @@ export function Reentry() {
                         </button>
                       ))}
                     </div>
-                    {easy && <div className="l3-note">💡 {t('l3.corr.hint')}</div>}
+                    {easy && <Hint>{t('l3.corr.hint')}</Hint>}
                   </>
                 )}
 
                 {step === 'separation' && (
                   <>
                     <ul className="l3-checks">
-                      {[1, 2, 3].map(n => <li key={n} className={seq >= n ? 'is-ok' : 'is-wait'}>{seq >= n ? '✅' : '⏳'} {t(`l3.sep.${n}`)}</li>)}
+                      {[1, 2, 3].map(n => <li key={n} className={seq >= n ? 'is-ok' : 'is-wait'}><Icon name={seq >= n ? 'ok' : 'waiting'} size={22} /> {t(`l3.sep.${n}`)}</li>)}
                     </ul>
                     <button className="btn btn--yellow l3-go" disabled={seq < 3} onClick={() => run('separation')}>{t('l3.step.separation.cta')}</button>
                   </>
@@ -212,8 +215,8 @@ export function Reentry() {
                       <div><span>{t('l3.chute.speed')}</span><b>{Math.round(speed)} m/s</b></div>
                     </div>
                     <ul className="l3-checks l3-conds">
-                      <li className={drogue ? 'is-ok' : drogueOk ? 'is-ready' : 'is-wait'}>{drogue ? '✅' : drogueOk ? '🟢' : '⏳'} {t('l3.chute.drogue.cond', { alt: DROGUE_ALT, speed: DROGUE_SPEED })}</li>
-                      <li className={mainsOk ? 'is-ready' : 'is-wait'}>{mainsOk ? '🟢' : '⏳'} {t('l3.chute.main.cond', { alt: MAIN_ALT, speed: MAIN_SPEED })}</li>
+                      <li className={drogue ? 'is-ok' : drogueOk ? 'is-ready' : 'is-wait'}><Icon name={drogue ? 'ok' : drogueOk ? 'ok' : 'waiting'} tone={!drogue && drogueOk ? 'yellow' : undefined} size={22} /> {t('l3.chute.drogue.cond', { alt: DROGUE_ALT, speed: DROGUE_SPEED })}</li>
+                      <li className={mainsOk ? 'is-ready' : 'is-wait'}><Icon name={mainsOk ? 'ok' : 'waiting'} tone={mainsOk ? 'yellow' : undefined} size={22} /> {t('l3.chute.main.cond', { alt: MAIN_ALT, speed: MAIN_SPEED })}</li>
                     </ul>
                     <div className="l3-actions">
                       <button className="btn btn--orange" disabled={!drogueOk || drogue} onClick={() => setDrogue(true)}>{t('l3.chute.drogue.cta')}</button>
@@ -227,7 +230,7 @@ export function Reentry() {
                 {step === 'landing' && (
                   <>
                     <ul className="l3-checks">
-                      {[1, 2, 3].map(n => <li key={n} className="is-ok">🛟 {t(`l3.land.${n}`)}</li>)}
+                      {[1, 2, 3].map(n => <li key={n} className="is-ok"><Icon name="buoy" size={22} /> {t(`l3.land.${n}`)}</li>)}
                     </ul>
                     <button className="btn btn--green l3-go" onClick={() => run('landing')}>{t('l3.step.landing.cta')}</button>
                   </>
@@ -239,9 +242,9 @@ export function Reentry() {
               <section className="panel l3-stage l3-landed">
                 <div className="l3-landed__av"><Astronaut config={avatar} pose="cheer" expression="happy" size={170} /></div>
                 <div>
-                  <h2 className="l3-h2">🌊 {t('l3.re.safe.title')}</h2>
+                  <h2 className="l3-h2 l3-h2--icon"><Icon name="splash" size={34} />{t('l3.re.safe.title')}</h2>
                   <p>{t('l3.re.safe.text')}</p>
-                  <button className="btn btn--yellow l3-go" onClick={() => game.go('report')}>{t('l3.re.safe.cta')} ▶</button>
+                  <button className="btn btn--yellow l3-go" onClick={() => game.go('report')}>{t('l3.re.safe.cta')} <Icon name="go" size={20} /></button>
                 </div>
               </section>
             )}
@@ -251,14 +254,14 @@ export function Reentry() {
                 <h3 className="l3-h3">{t('l3.corr.debrief')}</h3>
                 {CORRIDORS.map(c => (
                   <div key={c} className={`l3-debrief__row ${c === corridor ? 'is-picked' : ''}`}>
-                    <b>{c === corridor ? '👉 ' : ''}{t(`l3.corr.${c}`)}</b>
+                    <b>{c === corridor && <Icon name="pointer" size={20} />}{t(`l3.corr.${c}`)}</b>
                     <p>{t(`l3.corr.explain.${c}`)}</p>
                   </div>
                 ))}
               </section>
             )}
 
-            {!failed && !safe && <Explain textKey={`l3.step.${step ?? 'landing'}.why`} />}
+            {!failed && !safe && <Explain titleKey={step === 'corridor' ? 'l3.corr.note' : `l3.step.${step ?? 'landing'}.note`} textKey={`l3.step.${step ?? 'landing'}.why`} />}
           </div>
         </div>
       </div>
