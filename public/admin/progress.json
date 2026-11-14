@@ -80,15 +80,17 @@
       "id": "level3",
       "title": "Nivel 3 — Regreso: Titán, rutas y reentrada",
       "weight": 10,
-      "status": "doing",
-      "model": "Sonnet"
+      "status": "done",
+      "model": "Sonnet",
+      "doneAt": "2026-11-14T16:40:38-03:00"
     },
     {
       "id": "report",
       "title": "Reporte final y puntaje (100 pts)",
       "weight": 5,
-      "status": "doing",
-      "model": "Sonnet"
+      "status": "done",
+      "model": "Sonnet",
+      "doneAt": "2026-11-14T16:40:38-03:00"
     },
     {
       "id": "i18n",
@@ -185,6 +187,12 @@
       "level": "success",
       "title": "Cinemáticas listas",
       "body": "Intro de título (de la Tierra a Saturno), despegue del cohete, viaje de 4 años con el mapa del sistema solar, maniobra de entrada en órbita, informe de llegada y la partida de regreso. Todas se pueden saltear."
+    },
+    {
+      "at": "2026-11-14T16:40:38-03:00",
+      "level": "success",
+      "title": "¡Juego completo de punta a punta!",
+      "body": "Nivel 3 (asistencia gravitatoria de Titán, 3 rutas de regreso, viaje a la Tierra), reentrada con corredor de entrada y paracaídas, y reporte final con puntaje sobre 100, medalla, decisiones clave y recomendaciones. Ahora: pulido, traducciones y video."
     }
   ]
 }
