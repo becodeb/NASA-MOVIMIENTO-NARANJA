@@ -111,15 +111,17 @@
       "id": "video",
       "title": "Video demo ≤30 s con subtítulos en inglés",
       "weight": 7,
-      "status": "doing",
-      "model": "Opus + Fable"
+      "status": "done",
+      "model": "Opus + Fable",
+      "doneAt": "2026-11-14T16:49:04-03:00"
     },
     {
       "id": "submit",
       "title": "Materiales de envío en inglés (descripción, referencias)",
       "weight": 2,
-      "status": "pending",
-      "model": "Sonnet"
+      "status": "done",
+      "model": "Sonnet",
+      "doneAt": "2026-11-14T16:49:04-03:00"
     }
   ],
   "notifications": [
@@ -200,6 +202,12 @@
       "level": "success",
       "title": "Video demo listo",
       "body": "Tráiler de 30 segundos con subtítulos en inglés y música original: nasa.becode.com.ar/media/space-odyssey-trailer.mp4"
+    },
+    {
+      "at": "2026-11-14T16:49:04-03:00",
+      "level": "success",
+      "title": "Materiales de envío listos",
+      "body": "Texto completo en inglés para la página de NASA (resumen, detalles, uso de IA, fuentes de NASA, referencias) y un esquema de 7 diapositivas. Juego disponible en 4 idiomas. Queda la ronda final de pruebas y pulido."
     }
   ]
 }
