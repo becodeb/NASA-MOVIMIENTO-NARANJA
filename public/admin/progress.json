@@ -9,7 +9,7 @@
       "title": "Base online + panel admin",
       "weight": 3,
       "status": "done",
-      "doneAt": "2026-11-14T16:10:00-03:00",
+      "doneAt": "2026-11-14T16:03:00-03:00",
       "model": "Opus"
     },
     {
@@ -18,7 +18,7 @@
       "weight": 8,
       "status": "done",
       "model": "Sonnet",
-      "doneAt": "2026-11-14T17:15:00-03:00"
+      "doneAt": "2026-11-14T16:18:00-03:00"
     },
     {
       "id": "worlds",
@@ -26,7 +26,7 @@
       "weight": 9,
       "status": "done",
       "model": "Fable",
-      "doneAt": "2026-11-14T17:00:00-03:00"
+      "doneAt": "2026-11-14T16:14:00-03:00"
     },
     {
       "id": "ships",
@@ -34,7 +34,7 @@
       "weight": 9,
       "status": "done",
       "model": "Fable",
-      "doneAt": "2026-11-14T17:15:00-03:00"
+      "doneAt": "2026-11-14T16:18:00-03:00"
     },
     {
       "id": "avatar",
@@ -42,7 +42,7 @@
       "weight": 6,
       "status": "done",
       "model": "Fable",
-      "doneAt": "2026-11-14T16:45:00-03:00"
+      "doneAt": "2026-11-14T16:12:00-03:00"
     },
     {
       "id": "intro",
@@ -62,7 +62,7 @@
       "id": "transit",
       "title": "Lanzamiento y viaje de ida a Saturno (48 meses)",
       "weight": 5,
-      "status": "pending",
+      "status": "doing",
       "model": "Fable"
     },
     {
@@ -83,7 +83,7 @@
       "id": "report",
       "title": "Reporte final y puntaje (100 pts)",
       "weight": 5,
-      "status": "pending",
+      "status": "doing",
       "model": "Sonnet"
     },
     {
@@ -117,40 +117,46 @@
   ],
   "notifications": [
     {
-      "at": "2026-11-14T16:10:00-03:00",
+      "at": "2026-11-14T16:03:00-03:00",
       "level": "success",
       "title": "Base online",
       "body": "nasa.becode.com.ar responde con la base del juego y este panel. Arrancan en paralelo motor, mundos, naves y avatar."
     },
     {
-      "at": "2026-11-14T16:44:00-03:00",
+      "at": "2026-11-14T16:11:00-03:00",
       "level": "info",
       "title": "Reporte por mail activado",
       "body": "Se envió el mail de prueba; a partir de ahora sale un reporte cada hora."
     },
     {
-      "at": "2026-11-14T16:45:00-03:00",
+      "at": "2026-11-14T16:12:00-03:00",
       "level": "success",
       "title": "Creador de astronauta listo",
       "body": "Cara, ojos, nariz, boca, cejas, orejas, pelo, piel, traje, casco, guantes y accesorios, con poses y expresiones. Vista previa: nasa.becode.com.ar/?preview=avatar"
     },
     {
-      "at": "2026-11-14T17:00:00-03:00",
+      "at": "2026-11-14T16:14:00-03:00",
       "level": "success",
       "title": "Galaxia y mundos listos",
       "body": "Fondo espacial animado con nebulosas y estrellas fugaces, Saturno con anillos y hexágono polar, Titán, Encélado con géiseres, la Tierra girando y el mapa de rutas. Vista previa: nasa.becode.com.ar/?preview=worlds"
     },
     {
-      "at": "2026-11-14T17:14:00-03:00",
+      "at": "2026-11-14T16:17:00-03:00",
       "level": "success",
       "title": "Naves listas",
       "body": "La nave cambia según las 5 decisiones del jugador (casco, motores, energía solar o nuclear, soporte vital, antenas), más el cohete de despegue y la cápsula de reentrada con paracaídas. Vista previa: nasa.becode.com.ar/?preview=ships"
     },
     {
-      "at": "2026-11-14T17:15:00-03:00",
+      "at": "2026-11-14T16:18:00-03:00",
       "level": "success",
       "title": "Reglas de la misión listas",
       "body": "Toda la simulación usa los números del documento del equipo y está verificada con los ejemplos del documento. Arranca el armado de los 3 niveles jugables."
+    },
+    {
+      "at": "2026-11-14T16:25:00-03:00",
+      "level": "info",
+      "title": "Arrancan las pantallas jugables",
+      "body": "En paralelo: menú + intro + Nivel 1, cinemáticas (despegue, viaje y llegada a Saturno), Nivel 2 con las 6 emergencias, y Nivel 3 con reentrada y reporte final."
     }
   ]
 }
