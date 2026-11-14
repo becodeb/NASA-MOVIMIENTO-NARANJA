@@ -157,6 +157,7 @@ const es: Record<string, string> = {
   'l3.val.fast': 'rápida', 'l3.val.balanced': 'equilibrada', 'l3.val.slow': 'lenta',
   'l3.rec.capsule': 'Cuidá la cápsula: es la única forma de aterrizar. Evitá que sus sistemas fallen y usá los repuestos en lo que mantiene viva a la tripulación.',
   'l3.rec.corridor': 'El reingreso es un corredor estrecho. Muy superficial y rebotás, muy pronunciado y te quemás. El ángulo intermedio equilibra calentamiento y frenado.',
+  'l3.rec.maneuverCombined': 'La maniobra quedó justa incluso con propulsión combinada. Planificá la asistencia de Titán (ahorro neto de 8), evitá maniobras opcionales en Saturno y elegí la ruta pensando en la reserva de 8 unidades.',
   'l3.rec.maneuver': 'La maniobra quedó justa. Considerá propulsión combinada (más capacidad) o la asistencia de Titán (ahorro neto de 8) y tené en cuenta la reserva de 8 unidades desde el diseño.',
   'l3.rec.vital': 'El soporte vital fue el cuello de botella. El soporte vital regenerativo reduce a la mitad el uso mensual y habilita las rutas largas y suaves.',
   'l3.rec.structure': 'La estructura liviana ahorró masa pero sufrió más con el impacto. Un casco reforzado reduce mucho el daño; fijate si el presupuesto lo permite.',

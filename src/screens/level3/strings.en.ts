@@ -164,6 +164,7 @@ const en: Record<string, string> = {
   'l3.val.fast': 'fast', 'l3.val.balanced': 'balanced', 'l3.val.slow': 'slow',
   'l3.rec.capsule': 'Protect the capsule: it is the only way to land. Keep its systems out of the way of failures and use spares on what keeps the crew alive.',
   'l3.rec.corridor': 'Reentry is a narrow corridor. Too shallow and you skip off, too steep and you burn. The middle angle is the one that balances heating and braking.',
+  'l3.rec.maneuverCombined': 'Maneuver ran tight even with combined propulsion. Plan the Titan assist (net saving of 8), skip optional burns at Saturn, and size the route against the 8-unit reserve before you commit.',
   'l3.rec.maneuver': 'Maneuver ran tight. Consider combined propulsion (more capacity) or the Titan assist (net saving of 8) and keep the 8-unit reserve in mind from the design stage.',
   'l3.rec.vital': 'Life support was the bottleneck. Regenerative life support halves the monthly use, which makes the long, gentle routes possible.',
   'l3.rec.structure': 'The light structure saved mass but took more damage from the impact. A reinforced hull cuts the damage a lot; check if the budget allows it.',

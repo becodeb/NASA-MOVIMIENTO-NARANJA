@@ -164,6 +164,7 @@ const fr: Record<string, string> = {
   'l3.val.fast': 'rapide', 'l3.val.balanced': 'équilibré', 'l3.val.slow': 'lent',
   'l3.rec.capsule': 'Protège la capsule : c’est le seul moyen d’atterrir. Garde ses systèmes à l’abri des pannes et utilise les pièces de rechange sur ce qui maintient l’équipage en vie.',
   'l3.rec.corridor': 'La rentrée est un couloir étroit. Trop plat et tu rebondis, trop raide et tu brûles. L’angle moyen est celui qui équilibre chauffe et freinage.',
+  'l3.rec.maneuverCombined': 'La manœuvre était serrée même avec la propulsion combinée. Prévois l’assistance de Titan (économie nette de 8), évite les manœuvres optionnelles autour de Saturne et choisis la route en gardant la réserve de 8 unités.',
   'l3.rec.maneuver': 'La manœuvre était serrée. Envisage la propulsion combinée (plus de capacité) ou l’assistance de Titan (économie nette de 8) et garde la réserve de 8 unités en tête dès la conception.',
   'l3.rec.vital': 'Le support de vie était le goulot d’étranglement. Le support de vie régénératif divise par deux la consommation mensuelle, ce qui rend possibles les longs trajets doux.',
   'l3.rec.structure': 'La structure légère a économisé de la masse, mais a subi plus de dégâts à l’impact. Une coque renforcée réduit beaucoup les dégâts ; vérifie si le budget le permet.',

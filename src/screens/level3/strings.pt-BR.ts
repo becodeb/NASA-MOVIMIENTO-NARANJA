@@ -164,6 +164,7 @@ const ptBR: Record<string, string> = {
   'l3.val.fast': 'rápida', 'l3.val.balanced': 'equilibrada', 'l3.val.slow': 'lenta',
   'l3.rec.capsule': 'Proteja a cápsula: ela é o único jeito de pousar. Mantenha os sistemas dela longe de falhas e use reservas no que mantém a tripulação viva.',
   'l3.rec.corridor': 'A reentrada é um corredor estreito. Raso demais e você quica; íngreme demais e você queima. O ângulo do meio é o que equilibra aquecimento e frenagem.',
+  'l3.rec.maneuverCombined': 'A manobra ficou no limite mesmo com propulsão combinada. Planeje a assistência de Titã (economia líquida de 8), evite manobras opcionais em Saturno e escolha a rota pensando na reserva de 8 unidades.',
   'l3.rec.maneuver': 'A manobra ficou no limite. Considere a propulsão combinada (mais capacidade) ou a assistência de Titã (economia líquida de 8) e lembre da reserva de 8 unidades desde a fase de projeto.',
   'l3.rec.vital': 'O suporte vital foi o gargalo. O suporte vital regenerativo reduz pela metade o uso mensal, o que torna possíveis as rotas longas e suaves.',
   'l3.rec.structure': 'A estrutura leve economizou massa, mas sofreu mais dano no impacto. Um casco reforçado reduz muito os danos; veja se o orçamento permite.',

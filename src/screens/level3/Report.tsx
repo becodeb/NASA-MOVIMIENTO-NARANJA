@@ -148,8 +148,10 @@ function recommend(m: MissionState, sc: ScoreBreakdown): string[] {
   const out: string[] = []
   const hasExpl = m.reentry.outcome === 'failed'
   if (hasExpl) out.push(m.reentry.failureKey === 'engine.reentry.capsule.fail' ? 'l3.rec.capsule' : 'l3.rec.corridor')
-  if (!m.route && m.reentry.outcome === 'pending') out.push(m.maneuver < 46 ? 'l3.rec.maneuver' : 'l3.rec.vital')
-  if (m.maneuver < 20 && !out.includes('l3.rec.maneuver')) out.push('l3.rec.maneuver')
+  // Don't suggest combined propulsion to a player who already flew it.
+  const recMan = m.config.propulsion === 'combined' ? 'l3.rec.maneuverCombined' : 'l3.rec.maneuver'
+  if (!m.route && m.reentry.outcome === 'pending') out.push(m.maneuver < 46 ? recMan : 'l3.rec.vital')
+  if (m.maneuver < 20 && !out.includes(recMan)) out.push(recMan)
   if (m.vital < 20 && m.config.lifeSupport === 'consumables') out.push('l3.rec.vital')
   if (m.structure < 80 && m.config.structure === 'light') out.push('l3.rec.structure')
   const collected = INVESTIGATION_ORDER.filter(i => m.science.collected[i]).length
