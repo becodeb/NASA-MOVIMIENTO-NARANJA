@@ -11,7 +11,15 @@ HERE = Path(__file__).parent
 W, H, DUR = 1920, 1080, 30.0
 
 with sync_playwright() as p:
-    browser = p.chromium.launch(args=['--autoplay-policy=no-user-gesture-required', '--disable-gpu-vsync'])
+    launch_args = ['--autoplay-policy=no-user-gesture-required']
+    browser = None
+    for channel in ('chrome', 'msedge', None):
+        try:
+            browser = p.chromium.launch(channel=channel, args=launch_args) if channel else p.chromium.launch(args=launch_args)
+            break
+        except Exception as e:  # channel not installed
+            print('browser channel', channel, 'unavailable:', str(e).splitlines()[0])
+    assert browser, 'no Chromium-based browser available'
     ctx = browser.new_context(viewport={'width': W, 'height': H}, device_scale_factor=1,
                               record_video_dir=str(OUT / 'rec'), record_video_size={'width': W, 'height': H})
     t_ctx = time.monotonic()

@@ -96,8 +96,9 @@
       "id": "i18n",
       "title": "Traducciones PT-BR y FR",
       "weight": 3,
-      "status": "pending",
-      "model": "Haiku"
+      "status": "done",
+      "model": "Haiku",
+      "doneAt": "2026-11-14T16:46:46-03:00"
     },
     {
       "id": "polish",
@@ -193,6 +194,12 @@
       "level": "success",
       "title": "¡Juego completo de punta a punta!",
       "body": "Nivel 3 (asistencia gravitatoria de Titán, 3 rutas de regreso, viaje a la Tierra), reentrada con corredor de entrada y paracaídas, y reporte final con puntaje sobre 100, medalla, decisiones clave y recomendaciones. Ahora: pulido, traducciones y video."
+    },
+    {
+      "at": "2026-11-14T16:46:46-03:00",
+      "level": "success",
+      "title": "Video demo listo",
+      "body": "Tráiler de 30 segundos con subtítulos en inglés y música original: nasa.becode.com.ar/media/space-odyssey-trailer.mp4"
     }
   ]
 }
