@@ -3,6 +3,7 @@ import { useSyncExternalStore } from 'react'
 import type { ActionResult, Checkpoint, Difficulty, MissionState, Params } from '../engine/types'
 import { createCheckpoint, restoreCheckpoint, canRestore } from '../engine/engine'
 import { DEFAULT_AVATAR, loadAvatar, type AvatarConfig } from '../avatar'
+import { play } from './sfx'
 
 /** Screen flow:
  * opening → menu → intro → avatar → level1 → launch → arrival → level2 → departure → level3 → reentry → report
@@ -54,7 +55,15 @@ function persist() {
 }
 
 function set(patch: Partial<GameState>) {
+  const prev = state
   state = { ...state, ...patch }
+  // Sound cues driven by state transitions (screens stay sound-agnostic).
+  if (patch.mission && patch.mission.activeEmergency && patch.mission.activeEmergency !== prev.mission?.activeEmergency) play('alarm')
+  if (patch.screen && patch.screen !== prev.screen) {
+    if (patch.screen === 'launch') setTimeout(() => play('launch'), 900)
+    else if (patch.screen === 'report' && state.mission?.reentry.outcome === 'safe') setTimeout(() => play('fanfare'), 600)
+    else play('whoosh')
+  }
   persist()
   listeners.forEach(l => l())
 }
@@ -80,6 +89,7 @@ export const game = {
     if (opts.toast !== false && 'msgKey' in r && r.msgKey) {
       const t: Toast = { id: toastSeq++, kind: r.ok === false ? 'bad' : 'ok', msgKey: r.msgKey, params: r.params ?? {}, explanationKey: r.explanationKey }
       patch.toasts = [...state.toasts.slice(-2), t]
+      play(r.ok === false ? 'bad' : 'ok')
     }
     set(patch)
     return r

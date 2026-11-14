@@ -2,6 +2,7 @@ export default {
   en: {
     'common.continue': 'CONTINUE', 'common.back': 'BACK', 'common.menu': 'Main menu', 'common.why': 'Why does this matter?',
     'common.language': 'Language', 'common.skip': 'SKIP', 'common.retry': 'TRY AGAIN', 'common.restore': 'UNDO TO LAST CHECKPOINT',
+    'common.soundOn': 'Turn sound on', 'common.soundOff': 'Mute sound',
     'common.comingSoon': 'This part of the mission is being built — check back soon!',
     'hud.month': 'Month {m}', 'hud.maneuver': 'Maneuver', 'hud.power': 'Power margin', 'hud.battery': 'Battery',
     'hud.vital': 'Life support', 'hud.structure': 'Hull', 'hud.radiation': 'Radiation',
@@ -16,6 +17,7 @@ export default {
   es: {
     'common.continue': 'CONTINUAR', 'common.back': 'VOLVER', 'common.menu': 'Menú principal', 'common.why': '¿Por qué importa?',
     'common.language': 'Idioma', 'common.skip': 'SALTEAR', 'common.retry': 'REINTENTAR', 'common.restore': 'VOLVER AL ÚLTIMO PUNTO GUARDADO',
+    'common.soundOn': 'Activar sonido', 'common.soundOff': 'Silenciar',
     'common.comingSoon': 'Esta parte de la misión se está construyendo. ¡Volvé pronto!',
     'hud.month': 'Mes {m}', 'hud.maneuver': 'Maniobra', 'hud.power': 'Margen eléctrico', 'hud.battery': 'Batería',
     'hud.vital': 'Soporte vital', 'hud.structure': 'Casco', 'hud.radiation': 'Radiación',

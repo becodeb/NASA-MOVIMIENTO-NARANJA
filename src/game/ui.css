@@ -45,3 +45,5 @@
 
 #root { overflow-y: auto; }
 body { overflow: auto; }
+
+.app-mute { position: fixed; left: 12px; bottom: 12px; z-index: 60; padding: 6px 12px; font-size: 18px; border-radius: 999px; }
