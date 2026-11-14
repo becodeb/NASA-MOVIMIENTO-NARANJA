@@ -1,0 +1,371 @@
+/* Space Odyssey — worlds & space art. All classes are prefixed `sw-`.
+   Animations only run under `.sw-anim` (set when animate && !prefers-reduced-motion). */
+
+.sw-world {
+  display: block;
+  max-width: 100%;
+  flex: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ───────── SpaceBackdrop ───────── */
+.sw-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 110%, rgba(102, 55, 184, 0.35) 0%, rgba(102, 55, 184, 0) 60%),
+    radial-gradient(140% 120% at 50% 0%, #16245a 0%, #101b3d 45%, #0a1128 100%);
+  contain: strict;
+}
+.sw-backdrop--fixed { position: fixed; }
+.sw-backdrop__stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.sw-nebula {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.6s ease;
+}
+.sw-neb {
+  position: absolute;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+}
+.sw-neb--a {
+  left: -18vmax; top: -14vmax; width: 70vmax; height: 46vmax;
+  background: radial-gradient(closest-side, rgba(102, 55, 184, 0.62), rgba(102, 55, 184, 0.22) 55%, rgba(102, 55, 184, 0) 100%);
+  transform: rotate(-18deg);
+}
+.sw-neb--b {
+  right: -22vmax; top: 8vmax; width: 64vmax; height: 40vmax;
+  background: radial-gradient(closest-side, rgba(244, 106, 167, 0.34), rgba(244, 106, 167, 0.12) 55%, rgba(244, 106, 167, 0) 100%);
+  transform: rotate(24deg);
+}
+.sw-neb--c {
+  left: 12vmax; bottom: -20vmax; width: 78vmax; height: 44vmax;
+  background: radial-gradient(closest-side, rgba(102, 55, 184, 0.5), rgba(102, 55, 184, 0.16) 60%, rgba(102, 55, 184, 0) 100%);
+  transform: rotate(12deg);
+}
+.sw-neb--d {
+  left: 28vmax; top: 6vmax; width: 34vmax; height: 20vmax;
+  background: radial-gradient(closest-side, rgba(56, 217, 208, 0.16), rgba(56, 217, 208, 0) 100%);
+  transform: rotate(-30deg);
+}
+.sw-neb--e {
+  left: -10vmax; bottom: 4vmax; width: 40vmax; height: 24vmax;
+  background: radial-gradient(closest-side, rgba(244, 106, 167, 0.26), rgba(244, 106, 167, 0) 100%);
+  transform: rotate(35deg);
+}
+.sw-anim .sw-neb { will-change: transform; }
+.sw-anim .sw-neb--a { animation: sw-neb-a 46s ease-in-out infinite alternate; }
+.sw-anim .sw-neb--b { animation: sw-neb-b 58s ease-in-out infinite alternate; }
+.sw-anim .sw-neb--c { animation: sw-neb-c 52s ease-in-out infinite alternate; }
+.sw-anim .sw-neb--d { animation: sw-neb-d 38s ease-in-out infinite alternate; }
+.sw-anim .sw-neb--e { animation: sw-neb-e 64s ease-in-out infinite alternate; }
+@keyframes sw-neb-a { to { transform: translate(7vmax, 4vmax) rotate(-10deg) scale(1.12); } }
+@keyframes sw-neb-b { to { transform: translate(-8vmax, 5vmax) rotate(14deg) scale(1.1); } }
+@keyframes sw-neb-c { to { transform: translate(-6vmax, -5vmax) rotate(20deg) scale(1.15); } }
+@keyframes sw-neb-d { to { transform: translate(10vmax, 6vmax) rotate(-12deg) scale(1.3); } }
+@keyframes sw-neb-e { to { transform: translate(8vmax, -6vmax) rotate(20deg) scale(1.2); } }
+
+.sw-backdrop__alarm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(ellipse at center, rgba(240, 68, 82, 0.1) 0%, rgba(240, 68, 82, 0.2) 55%, rgba(240, 68, 82, 0.55) 100%);
+}
+.sw-backdrop__alarm.is-on { opacity: 0.75; }
+.sw-anim .sw-backdrop__alarm.is-on { animation: sw-alarm 1.15s ease-in-out infinite; }
+@keyframes sw-alarm {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* ───────── shared SVG bits ───────── */
+.sw-twinkle { transform-box: fill-box; transform-origin: center; opacity: 0.85; }
+.sw-anim .sw-twinkle { animation: sw-twinkle 3s ease-in-out infinite; }
+@keyframes sw-twinkle {
+  0%, 100% { transform: scale(0.15) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1) rotate(45deg); opacity: 1; }
+}
+.sw-anim .sw-spin { transform-origin: 0px 0px; animation: sw-spin 80s linear infinite; }
+.sw-anim .sw-spin-rev { transform-origin: 0px 0px; animation: sw-spin 110s linear infinite reverse; }
+@keyframes sw-spin { to { transform: rotate(360deg); } }
+.sw-anim .sw-sun-pulse { transform-origin: 0px 0px; animation: sw-pulse 3.6s ease-in-out infinite; }
+@keyframes sw-pulse {
+  0%, 100% { transform: scale(0.94); opacity: 0.8; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+/* ───────── Saturn / Titan cloud streaks ───────── */
+.sw-anim .sw-sat-streak { animation: sw-streak 40s linear infinite; }
+@keyframes sw-streak { to { stroke-dashoffset: -100; } }
+.sw-anim .sw-sat-lane { animation: sw-lane var(--sw-dur, 40s) linear infinite; }
+@keyframes sw-lane { to { stroke-dashoffset: var(--sw-len, 91px); } }
+.sw-anim .sw-titan-haze { transform-origin: 0px 0px; animation: sw-haze 5s ease-in-out infinite; }
+@keyframes sw-haze {
+  0%, 100% { transform: scale(0.985); stroke-opacity: 0.35; }
+  50% { transform: scale(1.015); stroke-opacity: 0.7; }
+}
+
+/* ───────── Earth ───────── */
+.sw-anim .sw-earth-spin { animation: sw-earth-spin 60s linear infinite; will-change: transform; }
+@keyframes sw-earth-spin {
+  from { transform: translateX(-400px); }
+  to { transform: translateX(0px); }
+}
+
+/* ───────── Enceladus plumes ───────── */
+.sw-plume-jet { opacity: 0.9; }
+.sw-anim .sw-plume-jet { animation: sw-jet 2.6s ease-in-out infinite; }
+@keyframes sw-jet {
+  0%, 100% { transform: scale(0.8); opacity: 0.6; }
+  45% { transform: scale(1.1); opacity: 1; }
+  70% { transform: scale(0.95); opacity: 0.85; }
+}
+.sw-plume-bit { opacity: 0; }
+.sw-anim .sw-plume-mist { transform-origin: 0px 60px; animation: sw-mist 3.4s ease-in-out infinite; }
+@keyframes sw-mist {
+  0%, 100% { transform: scale(0.94); opacity: 0.7; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+.sw-anim .sw-plume-bit { animation: sw-bit 2.4s linear infinite; }
+@keyframes sw-bit {
+  0% { transform: translate(0px, 0px); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(var(--sw-dx), var(--sw-dy)); opacity: 0; }
+}
+
+/* ───────── SolarSystemMap ───────── */
+.sw-map { height: auto; }
+.sw-map-label {
+  font-family: var(--font-title, 'Lilita One', 'Arial Rounded MT Bold', system-ui, sans-serif);
+  font-size: 23px;
+  letter-spacing: 0.6px;
+  fill: #f5f7ff;
+  stroke: #111326;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+.sw-map-label--small { font-size: 18px; stroke-width: 4px; }
+.sw-map-label--route { font-size: 19px; stroke-width: 5px; }
+.sw-map-note {
+  font-family: var(--font-body, 'Nunito', system-ui, sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  font-style: italic;
+  fill: #8896b3;
+}
+.sw-anim .sw-map-flow { animation: sw-flow 1.4s linear infinite; }
+@keyframes sw-flow { to { stroke-dashoffset: -28; } }
+.sw-map-ping { opacity: 0; }
+.sw-anim .sw-map-ping { transform-origin: 0px 0px; animation: sw-ping 2.2s ease-out infinite; }
+@keyframes sw-ping {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+.sw-anim .sw-map-flame { transform-origin: -13px 0px; animation: sw-flame 0.22s ease-in-out infinite alternate; }
+@keyframes sw-flame {
+  from { transform: scaleX(0.7); }
+  to { transform: scaleX(1.25); }
+}
+
+/* ───────── RingParticles ───────── */
+.sw-ringparticles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* ───────── Micrometeoroid impact ───────── */
+.sw-impact-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.sw-impact-layer__flash { position: absolute; inset: 0; background: #f5f7ff; opacity: 0; }
+.sw-impact { position: absolute; width: 0; height: 0; }
+.sw-impact__rot { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+.sw-impact__streak {
+  position: absolute;
+  right: 0;
+  top: calc(-4px * var(--sw-scale, 1));
+  width: 60vmax;
+  height: calc(8px * var(--sw-scale, 1));
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--sw-color, #ffd447) 70%, #ffffff 100%);
+  transform-origin: 100% 50%;
+  opacity: 0;
+}
+.sw-impact__burst {
+  position: absolute;
+  left: calc(-90px * var(--sw-scale, 1));
+  top: calc(-90px * var(--sw-scale, 1));
+  width: calc(180px * var(--sw-scale, 1));
+  height: calc(180px * var(--sw-scale, 1));
+  overflow: visible;
+}
+.sw-impact__star, .sw-impact__ring, .sw-impact__shard { opacity: 0; transform-origin: 0px 0px; }
+
+.sw-anim .sw-impact__streak { animation: sw-imp-streak 0.26s cubic-bezier(0.5, 0, 0.9, 0.6) var(--sw-delay, 0s) both; }
+.sw-anim .sw-impact__star { animation: sw-imp-star 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) calc(var(--sw-delay, 0s) + 0.17s) both; }
+.sw-anim .sw-impact__ring { animation: sw-imp-ring 0.6s ease-out calc(var(--sw-delay, 0s) + 0.17s) both; }
+.sw-anim .sw-impact__shard { animation: sw-imp-shard 0.62s cubic-bezier(0.1, 0.7, 0.3, 1) calc(var(--sw-delay, 0s) + 0.17s) both; }
+.sw-anim .sw-impact-layer__flash { animation: sw-imp-flash 0.36s ease-out 0.17s both; }
+.sw-still .sw-impact__star { animation: sw-imp-still 0.8s ease-out both; }
+
+@keyframes sw-imp-streak {
+  0% { transform: translateX(-90vmax); opacity: 1; }
+  72% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(0) scaleX(0); opacity: 0; }
+}
+@keyframes sw-imp-star {
+  0% { transform: scale(0) rotate(-30deg); opacity: 1; }
+  35% { transform: scale(1.2) rotate(8deg); opacity: 1; }
+  100% { transform: scale(0.2) rotate(30deg); opacity: 0; }
+}
+@keyframes sw-imp-ring {
+  0% { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes sw-imp-shard {
+  0% { transform: translate(0px, 0px); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(var(--sw-dx), var(--sw-dy)); opacity: 0; }
+}
+@keyframes sw-imp-flash {
+  0% { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+@keyframes sw-imp-still {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ───────── Preview gallery ───────── */
+.sw-pv {
+  position: relative;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: #f5f7ff;
+  font-family: var(--font-body, 'Nunito', system-ui, sans-serif);
+}
+.sw-pv__inner {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 36px) clamp(12px, 3vw, 32px) 80px;
+}
+.sw-pv h1 {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-size: clamp(30px, 6vw, 60px);
+  line-height: 1;
+  color: #ffd447;
+  -webkit-text-stroke: 3px #111326;
+  paint-order: stroke fill;
+  text-shadow: 0 5px 0 #111326;
+  margin: 0 0 6px;
+  font-weight: 400;
+}
+.sw-pv h2 {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-weight: 400;
+  font-size: clamp(18px, 2.4vw, 24px);
+  margin: 0 0 4px;
+  color: #38d9d0;
+  letter-spacing: 0.5px;
+}
+.sw-pv p { margin: 0 0 12px; color: #b9c4e0; font-size: 14px; line-height: 1.45; }
+.sw-pv code { color: #ffd447; font-size: 0.92em; }
+.sw-pv__hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(70vh, 560px);
+  margin: 12px 0 22px;
+}
+.sw-pv__hero-moon { position: absolute; }
+.sw-pv__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.sw-pv__card {
+  position: relative;
+  background: rgba(16, 27, 61, 0.72);
+  border: 4px solid #111326;
+  border-radius: 20px;
+  box-shadow: 0 6px 0 #111326, inset 0 0 0 2px rgba(56, 217, 208, 0.22);
+  padding: 16px;
+  min-width: 0;
+  overflow: hidden;
+}
+.sw-pv__card--wide { grid-column: 1 / -1; }
+.sw-pv__stage { display: flex; align-items: center; justify-content: center; min-height: 190px; }
+.sw-pv__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+.sw-pv__controls label { display: inline-flex; align-items: center; gap: 8px; }
+.sw-pv__controls input[type='range'] { width: min(46vw, 170px); accent-color: #ff8c32; }
+.sw-pv__controls input[type='checkbox'] { width: 18px; height: 18px; accent-color: #38d9d0; }
+.sw-pv__btn {
+  font-family: var(--font-title, system-ui, sans-serif);
+  font-size: 15px;
+  color: #111326;
+  background: #ffd447;
+  border: 3px solid #111326;
+  border-radius: 12px;
+  padding: 6px 14px;
+  box-shadow: 0 4px 0 #111326;
+  cursor: pointer;
+}
+.sw-pv__btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #111326; }
+.sw-pv__btn:focus-visible { outline: 3px solid #38d9d0; outline-offset: 2px; }
+.sw-pv__btn[aria-pressed='true'] { background: #38d9d0; }
+.sw-pv__btn--alarm[aria-pressed='true'] { background: #f04452; color: #f5f7ff; }
+.sw-pv__bar {
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: rgba(10, 17, 40, 0.86);
+  border: 3px solid #111326;
+  border-radius: 16px;
+  box-shadow: 0 5px 0 #111326;
+}
+.sw-pv__fxbox {
+  position: relative;
+  height: 220px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0a1128;
+  border: 3px solid #111326;
+  margin-bottom: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sw-world *, .sw-backdrop *, .sw-impact-layer * { animation: none !important; }
+}

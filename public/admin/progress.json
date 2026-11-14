@@ -23,8 +23,9 @@
       "id": "worlds",
       "title": "Galaxia y mundos: Saturno, anillos, Titán, Encélado, Tierra",
       "weight": 9,
-      "status": "doing",
-      "model": "Fable"
+      "status": "done",
+      "model": "Fable",
+      "doneAt": "2026-11-14T17:00:00-03:00"
     },
     {
       "id": "ships",
@@ -130,6 +131,12 @@
       "level": "success",
       "title": "Creador de astronauta listo",
       "body": "Cara, ojos, nariz, boca, cejas, orejas, pelo, piel, traje, casco, guantes y accesorios, con poses y expresiones. Vista previa: nasa.becode.com.ar/?preview=avatar"
+    },
+    {
+      "at": "2026-11-14T17:00:00-03:00",
+      "level": "success",
+      "title": "Galaxia y mundos listos",
+      "body": "Fondo espacial animado con nebulosas y estrellas fugaces, Saturno con anillos y hexágono polar, Titán, Encélado con géiseres, la Tierra girando y el mapa de rutas. Vista previa: nasa.becode.com.ar/?preview=worlds"
     }
   ]
 }
