@@ -1,6 +1,6 @@
-// LEVEL 2 — Survival at Saturn. All rules come from the engine; this file only drives the flow and the feedback.
+// LEVEL 2: Survival at Saturn. All rules come from the engine; this file only drives the flow and the feedback.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Explain, Hud, ScreenFrame } from '../../game/ui'
+import { Explain, Hud, Icon, ScreenFrame, Squiggle, type IconName } from '../../game/ui'
 import { game, useGame } from '../../game/store'
 import { EMERGENCY_ORDER } from '../../engine/data'
 import {
@@ -39,12 +39,14 @@ function deltas(a: MissionState, b: MissionState): { key: string; d: number }[] 
   return pairs.map(([key, x, y]) => ({ key, d: Math.round((y - x) * 100) / 100 })).filter((x) => x.d !== 0)
 }
 
+const levelStamp = (t: (k: string) => string) => <span className="stamp stamp--flat">{t('l2.stamp.level')}</span>
+
 export default function Level2() {
   const { mission, avatar } = useGame()
   const t = useT()
   if (!mission || mission.phase === 'design' || mission.phase === 'transit') {
     return (
-      <ScreenFrame title={t('l2.title')}>
+      <ScreenFrame title={t('l2.title')} actions={levelStamp(t)}>
         <div className="l2-wrap"><div className="panel l2-empty">
           <p>{t('l2.noMission')}</p>
           <button className="btn btn--yellow" onClick={() => game.go('level1')}>{t('l2.toLevel1')}</button>
@@ -56,7 +58,7 @@ export default function Level2() {
   if (mission.phase === 'closing' && !mission.route) return <Failure mission={mission} avatar={avatar} />
   if (mission.phase === 'return' || mission.phase === 'closing') {
     return (
-      <ScreenFrame title={t('l2.title')}>
+      <ScreenFrame title={t('l2.title')} actions={levelStamp(t)}>
         <div className="l2-wrap"><div className="panel l2-empty">
           <p>{t('l2.finished')}</p>
           <button className="btn btn--yellow" onClick={() => game.go('report')}>{t('l2.toReport')}</button>
@@ -182,7 +184,7 @@ function Ops({ mission }: { mission: MissionState }) {
   const showUndo = easy && !!outcome && (bad || outcome.status === 'unresolved' || outcome.status === 'partial') && game.canRestore()
 
   return (
-    <ScreenFrame title={t('l2.title')} subtitle={t('l2.subtitle')} alarm={!!active}>
+    <ScreenFrame title={t('l2.title')} subtitle={t('l2.subtitle')} alarm={!!active} actions={levelStamp(t)}>
       <div className={`l2-wrap ${active ? 'is-alarm' : ''}`}>
         <Hud mission={mission} compact />
         <div className="l2-main">
@@ -213,7 +215,7 @@ function Ops({ mission }: { mission: MissionState }) {
                 <section className="l2-card l2-card--calm">
                   <h2 className="title l2-card__title">{t('l2.finish.title')}</h2>
                   <p>{t('l2.finish.sub')}</p>
-                  <button className="btn btn--yellow l2-big" onClick={finish}>{t('l2.finish')} →</button>
+                  <button className="btn btn--yellow l2-big" onClick={finish}>{t('l2.finish')} <Icon name="go" size={28} /></button>
                 </section>
               ) : (
                 <section className="l2-card l2-card--calm">
@@ -240,11 +242,11 @@ function Timeline({ mission, activeId }: { mission: MissionState; activeId: Emer
         const st = mission.emergencies[id].status
         const current = i === mission.saturnMonth
         const cls = st === 'resolved' ? 'ok' : st === 'partial' ? 'partial' : st === 'unresolved' ? 'bad' : current ? 'current' : 'pending'
-        const mark = st === 'resolved' ? '✓' : st === 'partial' ? '!' : st === 'unresolved' ? '✗' : ''
+        const mark: IconName | null = st === 'resolved' ? 'ok' : st === 'partial' ? 'warning' : st === 'unresolved' ? 'fail' : null
         return (
           <li key={id} className={`l2-node l2-node--${cls} ${activeId === id ? 'is-active' : ''}`} aria-current={current ? 'step' : undefined}>
-            <span className="l2-node__dot" aria-hidden>{EM_ICON[id]}{mark && <i>{mark}</i>}</span>
-            <span className="l2-node__label">{t('l2.month', { n: i + 1 })}<small>{t(`l2.em.${id}`)} · {t(`l2.status.${st}`)}</small></span>
+            <span className="l2-node__dot" aria-hidden><Icon name={EM_ICON[id]} size={26} />{mark && <i><Icon name={mark} size={20} /></i>}</span>
+            <span className="l2-node__label">{t('l2.month', { n: i + 1 })}<small>{t(`l2.em.${id}`)}</small><small className="l2-node__st">{t(`l2.status.${st}`)}</small></span>
           </li>
         )
       })}
@@ -261,13 +263,13 @@ function shuffled(list: EmergencyOption[], seed: string): EmergencyOption[] {
 function CostChips({ o }: { o: EmergencyOption }) {
   const t = useT()
   const c = o.costs
-  const chips: string[] = []
-  if (c.battery) chips.push(t('l2.cost.battery', { n: c.battery }))
-  if (c.vital) chips.push(t('l2.cost.vital', { n: c.vital }))
-  if (c.spare) chips.push(t('l2.cost.spare', { spare: t(`l2.spare.${c.spare}`) }))
-  if (c.turn) chips.push(t('l2.cost.turn'))
-  if (!chips.length) chips.push(t('l2.cost.free'))
-  return <div className="l2-chips">{chips.map((x) => <span key={x} className="l2-chip l2-chip--cost">{x}</span>)}</div>
+  const chips: { icon?: IconName; text: string }[] = []
+  if (c.battery) chips.push({ icon: 'battery', text: t('l2.cost.battery', { n: c.battery }) })
+  if (c.vital) chips.push({ icon: 'life-support', text: t('l2.cost.vital', { n: c.vital }) })
+  if (c.spare) chips.push({ icon: 'spare-kit', text: t('l2.cost.spare', { spare: t(`l2.spare.${c.spare}`) }) })
+  if (c.turn) chips.push({ icon: 'turn', text: t('l2.cost.turn') })
+  if (!chips.length) chips.push({ text: t('l2.cost.free') })
+  return <div className="l2-chips">{chips.map((x) => <span key={x.text} className="chip">{x.icon && <Icon name={x.icon} size={18} />}{x.text}</span>)}</div>
 }
 
 function EmergencyCard({ mission, view, easy, onChoose }: { mission: MissionState; view: ReturnType<typeof getEmergency>; easy: boolean; onChoose: (o: EmergencyOption) => void }) {
@@ -277,19 +279,22 @@ function EmergencyCard({ mission, view, easy, onChoose }: { mission: MissionStat
     : view.id === 'thermal' && Number(prog.data.heated) > 0 ? t('l2.step.heat', { heated: Number(prog.data.heated) + 1, turns: 2 })
     : t(`l2.step.${view.step}`)
   return (
-    <section className="l2-card l2-card--alarm" aria-labelledby="l2-em-title">
-      <div className="l2-card__top">
-        <span className="l2-siren" aria-hidden>🚨</span>
-        <div>
-          <p className="l2-kicker">{t('l2.alarm')} · {t('l2.month', { n: mission.saturnMonth + 1 })} · {step}</p>
-          <h2 id="l2-em-title" className="title l2-card__title">{EM_ICON[view.id]} {t(view.titleKey)}</h2>
-        </div>
+    <section className="l2-incident surface-paper surface-paper--tape" aria-labelledby="l2-em-title">
+      <div className="l2-incident__stripe" aria-hidden />
+      <div className="l2-incident__top">
+        <span className="stamp stamp--red"><Icon name="siren" size={18} />{t('l2.inc.title')}</span>
+        <span className="label l2-incident__meta">{t('l2.month', { n: mission.saturnMonth + 1 })}</span>
+        <span className="label l2-incident__meta">{step}</span>
+      </div>
+      <div className="l2-incident__head">
+        <Icon name={EM_ICON[view.id]} size={52} />
+        <h2 id="l2-em-title" className="paper-title l2-incident__title">{t(view.titleKey)}</h2>
       </div>
       <p className="l2-situation">{t(view.situationKey)}</p>
-      <p className="l2-delay">📡 {t('l2.delay')}</p>
-      <Explain titleKey="l2.sci.title" textKey={view.scienceKey} />
-      {easy && <p className="l2-hint">💬 {t(`l2.hint.${view.id}`)}</p>}
-      <h3 className="l2-choose">{t('l2.choose')}</h3>
+      <p className="l2-delay fine"><Icon name="light-delay" size={20} /> {t('l2.delay')}</p>
+      <Explain title={t(`l2.note.${view.id}`)} textKey={view.scienceKey} tilt={0} />
+      {easy && <p className="l2-hint"><span className="stamp stamp--yellow l2-hint__stamp"><Icon name="hint" size={16} />{t('l2.stamp.hint')}</span> {t(`l2.hint.${view.id}`)}</p>}
+      <h3 className="l2-choose squiggled">{t('l2.choose')}<Squiggle /></h3>
       <ul className="l2-options">
         {shuffled(view.options, `${view.id}-${view.step}`).map((o) => (
           <li key={o.id}>
@@ -297,7 +302,7 @@ function EmergencyCard({ mission, view, easy, onChoose }: { mission: MissionStat
               <b>{t(o.labelKey)}</b>
               <span>{t(o.descKey)}</span>
               <CostChips o={o} />
-              {!o.available && o.reasonKey && <em className="l2-opt__reason">{t('l2.locked', { reason: t(o.reasonKey, P(o.reasonParams ?? {}, t)) })}</em>}
+              {!o.available && o.reasonKey && <em className="l2-opt__reason"><Icon name="lock" size={18} />{t('l2.locked', { reason: t(o.reasonKey, P(o.reasonParams ?? {}, t)) })}</em>}
             </button>
           </li>
         ))}
@@ -312,34 +317,44 @@ function OutcomeCard({ o, showUndo, onUndo, onContinue }: { o: OutcomeView; show
     ? o.status === 'resolved' ? 'fixed' : o.status === 'partial' ? 'partial' : 'unresolved'
     : o.success ? 'progress' : 'nope'
   const tone = o.closed ? (o.status === 'resolved' ? 'ok' : o.status === 'partial' ? 'mid' : 'bad') : o.success ? 'ok' : 'bad'
+  const icon: IconName = !o.closed && o.success ? 'go' : tone === 'ok' ? 'ok' : tone === 'mid' ? 'warning' : o.closed ? 'burst' : 'fail'
+  const stampTone = o.status === 'resolved' ? 'green' : o.status === 'partial' ? 'yellow' : 'red'
   return (
-    <section className={`l2-card l2-card--out is-${tone}`} role="status">
-      <h2 className="title l2-card__title">{!o.closed && o.success ? '➡️' : tone === 'ok' ? '✅' : tone === 'mid' ? '⚠️' : '💥'} {t(`l2.out.title.${title}`)}</h2>
+    <section className={`l2-out surface-paper surface-paper--tape is-${tone}`} role="status">
+      <div className="l2-out__top">
+        <span className="label">{t('l2.out.report')}</span>
+        <span className="label">{t('l2.month', { n: o.month })}</span>
+      </div>
+      <div className="l2-out__head">
+        <Icon name={icon} size={40} />
+        <h2 className="paper-title l2-out__title">{t(`l2.out.title.${title}`)}</h2>
+        {o.closed && <span key={o.status} className={`stamp stamp-in stamp--${stampTone} l2-out__stamp`}>{t(`l2.status.${o.status}`)}</span>}
+      </div>
       <div className="l2-flow">
         <div className="l2-flow__box">
-          <small>{t('l2.out.cause')}</small>
+          <small className="label">{t('l2.out.cause')}</small>
           <b>{t(`engine.opt.${o.id}.${o.optionId}`)}</b>
         </div>
-        <span className="l2-flow__arrow" aria-hidden>➜</span>
+        <Icon name="go" size={28} className="l2-flow__arrow" />
         <div className="l2-flow__box">
-          <small>{t('l2.out.effect')}</small>
+          <small className="label">{t('l2.out.effect')}</small>
           <b>{t(o.msgKey, P(o.params, t))}</b>
         </div>
       </div>
       {o.deltas.length > 0 && (
         <div className="l2-chips" aria-label={t('l2.out.changes')}>
           {o.deltas.map((d) => (
-            <span key={d.key} className={`l2-chip ${d.d > 0 ? (d.key === 'radiation' ? 'l2-chip--red' : 'l2-chip--green') : d.key === 'radiation' ? 'l2-chip--green' : 'l2-chip--red'}`}>
+            <span key={d.key} className={`chip tnum ${d.d > 0 ? (d.key === 'radiation' ? 'chip--red' : 'chip--green') : d.key === 'radiation' ? 'chip--green' : 'chip--red'}`}>
               {t(`l2.delta.${d.key}`)} {d.d > 0 ? '+' : '−'}{Math.abs(d.d)}
             </span>
           ))}
         </div>
       )}
-      {o.params.blackout === true && <p className="l2-blackout">🔌 {t('l2.out.blackout')}</p>}
-      <Explain titleKey="l2.out.why" textKey={o.explanationKey} params={o.params} defaultOpen />
+      {o.params.blackout === true && <p className="l2-blackout"><Icon name="blackout" size={26} /> {t('l2.out.blackout')}</p>}
+      <Explain titleKey={`l2.outnote.${o.id}`} textKey={o.explanationKey} params={o.params} defaultOpen tilt={0} />
       {o.closed && <p className="l2-closed">{t('l2.out.closed', { n: o.month, status: t(`l2.status.${o.status}`) })}</p>}
       <div className="l2-actions">
-        {showUndo && <button className="btn btn--yellow" onClick={onUndo}>↩ {t('common.restore')}</button>}
+        {showUndo && <button className="btn btn--yellow" onClick={onUndo}><Icon name="undo" size={22} /> {t('common.restore')}</button>}
         <button className="btn btn--green" onClick={onContinue}>{o.closed ? t('l2.out.continue') : t('l2.out.next')}</button>
       </div>
     </section>

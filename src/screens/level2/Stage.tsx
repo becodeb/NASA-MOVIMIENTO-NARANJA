@@ -5,6 +5,7 @@ import { Sparkle, Spaceship } from '../../art/ships'
 import { Astronaut, type AstronautExpression, type AstronautPose } from '../../avatar'
 import type { AvatarConfig } from '../../avatar'
 import type { EmergencyId, MissionState } from '../../engine/types'
+import { Icon } from '../../game/icons'
 import { useT } from '../../i18n'
 
 export interface StageProps {
@@ -78,7 +79,7 @@ export function Stage(p: StageProps) {
 
       <div className="l2-desk" aria-hidden>
         <div className={`l2-screen ${alarm ? 'is-alarm' : ''} ${antennaDown ? 'is-noise' : ''}`}>
-          <span>{alarm && p.alarmId ? `⚠ ${t(`engine.em.${p.alarmId}.title`)}` : p.screenText}</span>
+          <span>{alarm && p.alarmId ? <><Icon name="warning" size={18} /> {t(`engine.em.${p.alarmId}.title`)}</> : p.screenText}</span>
         </div>
         <div className="l2-lights">{Array.from({ length: 8 }, (_, i) => <i key={i} style={{ animationDelay: `${i * 0.23}s` }} />)}</div>
       </div>
