@@ -1,0 +1,259 @@
+/* Space Odyssey — vehicles. Every class is prefixed `sh-`. */
+.sh-root { -webkit-tap-highlight-color: transparent; }
+.sh-root.sh-still *, .sh-root .sh-still, .sh-root .sh-still * { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .sh-root, .sh-root * { animation: none !important; transition: none !important; }
+}
+
+/* ---------- generic ---------- */
+.sh-blink { animation: sh-blink 1.6s steps(1) infinite; }
+@keyframes sh-blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0.25; } }
+.sh-twinkle { animation: sh-twinkle 2.4s ease-in-out infinite alternate; }
+@keyframes sh-twinkle { from { opacity: 0.25; } to { opacity: 1; } }
+@keyframes sh-holo { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.85; } }
+@keyframes sh-shake {
+  0% { transform: translate(1.5px, -1px); } 25% { transform: translate(-1.5px, 1px); }
+  50% { transform: translate(1px, 1.5px); } 75% { transform: translate(-1px, -1.5px); } 100% { transform: translate(1.5px, 1px); }
+}
+
+/* ---------- ExhaustPlume ---------- */
+.sh-flame-a { animation: sh-flick-a 0.13s ease-in-out infinite alternate; }
+.sh-flame-b { animation: sh-flick-b 0.1s ease-in-out infinite alternate; }
+.sh-flame-c { animation: sh-flick-b 0.08s ease-in-out infinite alternate-reverse; }
+@keyframes sh-flick-a { from { transform: scale(1, 1); } to { transform: scale(0.86, 1.06); } }
+@keyframes sh-flick-b { from { transform: scale(0.9, 1.05); } to { transform: scale(1.08, 0.94); } }
+.sh-ion-beam { animation: sh-ion-pulse 0.5s ease-in-out infinite alternate; }
+.sh-ion-glow { animation: sh-ion-pulse 0.35s ease-in-out infinite alternate; }
+@keyframes sh-ion-pulse { from { opacity: 0.7; } to { opacity: 1; } }
+.sh-ion-dash { animation: sh-ion-dash 0.35s linear infinite; }
+@keyframes sh-ion-dash { to { stroke-dashoffset: -26; } }
+.sh-ion-ring { animation: sh-ion-pulse 0.3s ease-in-out infinite alternate; }
+
+/* ---------- Sparks / SmokePuff / Sparkle ---------- */
+.sh-spark { opacity: 0; animation: sh-spark 0.9s ease-out infinite; }
+@keyframes sh-spark {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 1; }
+  55% { transform: translate(var(--dx), var(--dy)); opacity: 1; }
+  100% { transform: translate(calc(var(--dx) * 1.25), calc(var(--dy) * 1.25 + 6px)); opacity: 0; }
+}
+.sh-spark-flash { animation: sh-flash 0.5s steps(1) infinite; }
+@keyframes sh-flash {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  25% { transform: scale(0.4) rotate(30deg); opacity: 0.8; }
+  50% { transform: scale(1.25) rotate(45deg); opacity: 1; }
+  75% { transform: scale(0.1); opacity: 0; }
+}
+.sh-smoke-puff { opacity: 0; animation: sh-smoke 2.4s ease-out infinite; }
+@keyframes sh-smoke {
+  0% { transform: translate(0, 0) scale(0.25); opacity: 0; }
+  12% { opacity: 0.95; }
+  70% { opacity: 0.8; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
+}
+.sh-sparkle-star { opacity: 0; animation: sh-star 0.75s ease-out both; }
+@keyframes sh-star {
+  0% { transform: scale(0) rotate(-60deg); opacity: 0; }
+  35% { transform: scale(1.25) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0) rotate(50deg); opacity: 0; }
+}
+.sh-sparkle-ring { opacity: 0; animation: sh-ring 0.6s ease-out both; }
+@keyframes sh-ring { 0% { transform: scale(0.2); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+/* ---------- Spaceship ---------- */
+.sh-float { transform-origin: 380px 240px; animation: sh-float 5.5s ease-in-out infinite; }
+@keyframes sh-float {
+  0%, 100% { transform: translateY(-6px) rotate(-0.7deg); }
+  50% { transform: translateY(6px) rotate(0.7deg); }
+}
+.sh-rumble { animation: sh-rumble 0.09s linear infinite; }
+@keyframes sh-rumble { 0% { transform: translate(0.8px, -0.6px); } 50% { transform: translate(-0.8px, 0.6px); } 100% { transform: translate(0.8px, 0.6px); } }
+
+.sh-ghost { animation: sh-holo 2.4s ease-in-out infinite; }
+.sh-ghost * {
+  fill: rgba(56, 217, 208, 0.07) !important;
+  stroke: #38d9d0 !important;
+  stroke-width: 2.4px !important;
+  stroke-dasharray: 7 6;
+  animation: none !important;
+}
+.sh-ghost .sh-nog { display: none; }
+
+.sh-snap { transform-box: fill-box; transform-origin: center; animation: sh-snap 0.65s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+@keyframes sh-snap {
+  0% { transform: translateY(-34px) scale(0.5); opacity: 0; }
+  45% { transform: translateY(4px) scale(1.12, 0.92); opacity: 1; }
+  70% { transform: translateY(-2px) scale(0.96, 1.05); }
+  100% { transform: none; }
+}
+
+.sh-rcs { opacity: 0; animation: sh-rcs 6.5s linear infinite; }
+@keyframes sh-rcs { 0%, 3% { opacity: 0.9; } 5%, 100% { opacity: 0; } }
+.sh-glint { animation: sh-glint 6s ease-in-out infinite; }
+@keyframes sh-glint { 0%, 55% { transform: translateX(0) skewX(-22deg); } 85%, 100% { transform: translateX(420px) skewX(-22deg); } }
+.sh-rad-glow { opacity: 0.2; animation: sh-rad 3s ease-in-out infinite alternate; }
+@keyframes sh-rad { from { opacity: 0.08; } to { opacity: 0.5; } }
+.sh-flow { animation: sh-flow 0.9s linear infinite; }
+@keyframes sh-flow { to { stroke-dashoffset: -18; } }
+.sh-sprout { animation: sh-sway 3s ease-in-out infinite alternate; }
+@keyframes sh-sway { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+.sh-grow { animation: sh-grow 4s ease-in-out infinite alternate; }
+@keyframes sh-grow { from { opacity: 0; } to { opacity: 0.22; } }
+.sh-dent { animation: sh-dent 0.35s ease-out both; }
+@keyframes sh-dent { from { opacity: 0; } to { opacity: 1; } }
+
+.sh-droop { transform: rotate(130deg); animation: sh-droop 1.7s ease-in-out infinite alternate; }
+@keyframes sh-droop { from { transform: rotate(116deg); } to { transform: rotate(142deg); } }
+
+.sh-beacon { animation: sh-beacon 0.5s steps(1) infinite; }
+@keyframes sh-beacon { 0% { fill: #f04452; } 50% { fill: #ffd0d4; } }
+.sh-beacon-halo { opacity: 0.3; animation: sh-halo 0.5s ease-in-out infinite alternate; }
+@keyframes sh-halo { from { opacity: 0.05; transform: scale(0.7); } to { opacity: 0.5; transform: scale(1.1); } }
+.sh-beacon-beam { animation: sh-beam 0.9s ease-in-out infinite alternate; }
+@keyframes sh-beam { from { transform: scaleX(1); } to { transform: scaleX(-1); } }
+.sh-alarm-on:not(.sh-dark) .sh-win { animation: sh-win-alarm 1s steps(1) infinite; }
+@keyframes sh-win-alarm { 0% { fill: #ff7f89; } 50% { fill: #38d9d0; } }
+.sh-hot { opacity: 0.3; animation: sh-hot 0.3s ease-in-out infinite alternate; }
+@keyframes sh-hot { from { opacity: 0.12; } to { opacity: 0.5; } }
+
+/* ---------- LaunchRocket ---------- */
+.sh-lr-rocket { transition: transform 1.5s cubic-bezier(0.55, 0, 0.9, 0.55); }
+.sh-lr--pad .sh-lr-rocket, .sh-lr--pad .sh-lr-ground { transition: none; }
+.sh-lr--liftoff .sh-lr-rocket { transform: translateY(-150px); }
+.sh-lr--ascent .sh-lr-rocket { transform: translateY(-780px); transform-origin: 200px 300px; animation: sh-lr-ascent 2.3s cubic-bezier(0.45, 0, 0.85, 0.5) both; }
+@keyframes sh-lr-ascent {
+  0% { transform: translateY(-150px) scale(1); }
+  55% { transform: translateY(-110px) scale(0.9); }
+  100% { transform: translateY(-780px) scale(0.8); }
+}
+.sh-lr--ignition .sh-lr-shake { animation: sh-shake 0.07s linear infinite; }
+.sh-lr--liftoff .sh-lr-shake, .sh-lr--ascent .sh-lr-shake { animation: sh-rumble 0.08s linear infinite; }
+.sh-lr-flames { transform-origin: 200px 498px; transform: scaleY(var(--s, 1)); transition: transform 0.45s ease-out; }
+.sh-lr-ground, .sh-lr-smoke { transition: transform 2.3s cubic-bezier(0.5, 0, 0.85, 0.55), opacity 0.4s; }
+.sh-lr--ascent .sh-lr-ground { transform: translateY(820px); }
+.sh-lr-smoke { transform-origin: 200px 530px; }
+.sh-lr--pad .sh-lr-smoke { transform: scale(0.1); opacity: 0; transition: none; }
+.sh-lr--ignition .sh-lr-smoke { transform: scale(0.6); transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.2s; }
+.sh-lr--liftoff .sh-lr-smoke { transform: scale(1.05); transition: transform 1.5s ease-out; }
+.sh-lr--ascent .sh-lr-smoke { transform: translateY(820px) scale(1.25); }
+.sh-lr-puff { animation: sh-lr-puff 1.5s ease-in-out infinite alternate; }
+@keyframes sh-lr-puff { from { transform: scale(0.86); } to { transform: scale(1.12); } }
+.sh-lr-arm { transform-origin: 124px 0; transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+.sh-lr--ignition .sh-lr-arm, .sh-lr--liftoff .sh-lr-arm, .sh-lr--ascent .sh-lr-arm { transform: scaleX(0.22); }
+.sh-lr-space { opacity: 0; transition: opacity 0.4s; }
+.sh-lr--ascent .sh-lr-space { opacity: 1; transition: opacity 1.9s ease-in 0.5s; }
+.sh-lr--ascent .sh-lr-clouds { animation: sh-lr-clouds 2.3s cubic-bezier(0.5, 0, 0.9, 0.6) both; }
+@keyframes sh-lr-clouds { from { transform: translateY(0); } to { transform: translateY(1500px); } }
+.sh-lr-vapor { opacity: 0.85; transition: opacity 0.3s; }
+.sh-lr--ignition .sh-lr-vapor, .sh-lr--liftoff .sh-lr-vapor, .sh-lr--ascent .sh-lr-vapor { opacity: 0; }
+.sh-lr-wisp { animation: sh-lr-wisp 2.8s ease-out infinite; }
+@keyframes sh-lr-wisp { 0% { transform: translate(0, 0); opacity: 0; } 20% { opacity: 0.9; } 100% { transform: translate(34px, 14px); opacity: 0; } }
+.sh-lr-stowed { animation: sh-holo 2.2s ease-in-out infinite; }
+
+/* ---------- ReentryCapsule ---------- */
+.sh-re-bg { opacity: 0; transition: opacity 0.8s ease; }
+.sh-re--separation .sh-re-bg--space, .sh-re--entry .sh-re-bg--entry,
+.sh-re--drogue .sh-re-bg--sky, .sh-re--main .sh-re-bg--sky, .sh-re--splashdown .sh-re-bg--sea { opacity: 1; }
+
+.sh-re-cap { transition: transform 1s cubic-bezier(0.3, 0.9, 0.4, 1); }
+.sh-re--separation .sh-re-cap { transform: translate(225px, 215px) rotate(-40deg) scale(0.8); }
+.sh-re--entry .sh-re-cap { transform: translate(225px, 300px) rotate(-40deg) scale(1); }
+.sh-re--drogue .sh-re-cap { transform: translate(200px, 330px) scale(0.8); }
+.sh-re--main .sh-re-cap { transform: translate(200px, 362px) scale(0.9); }
+.sh-re--splashdown .sh-re-cap { transform: translate(200px, 384px) scale(0.9); transition: none; }
+
+.sh-re--separation .sh-re-motion { animation: sh-re-drift 4s ease-in-out infinite alternate; }
+@keyframes sh-re-drift { from { transform: translate(-3px, -4px) rotate(-2deg); } to { transform: translate(3px, 6px) rotate(2deg); } }
+.sh-re--entry .sh-re-motion { animation: sh-rumble 0.1s linear infinite; }
+.sh-re--entry.sh-re--steep .sh-re-motion { animation: sh-re-violent 0.07s linear infinite; }
+@keyframes sh-re-violent {
+  0% { transform: translate(4px, -3px) rotate(1.5deg); } 33% { transform: translate(-4px, 2px) rotate(-1.5deg); }
+  66% { transform: translate(2px, 4px) rotate(1deg); } 100% { transform: translate(-3px, -3px) rotate(-1deg); }
+}
+.sh-re--entry.sh-re--shallow .sh-re-cap { animation: sh-re-skip 3.4s cubic-bezier(0.4, 0, 0.6, 1) both; }
+@keyframes sh-re-skip {
+  0% { transform: translate(70px, 120px) rotate(-52deg) scale(0.9); }
+  38% { transform: translate(215px, 268px) rotate(-88deg) scale(1); }
+  100% { transform: translate(470px, 30px) rotate(-128deg) scale(0.3); }
+}
+.sh-re--drogue .sh-re-motion { transform-origin: 0 -140px; animation: sh-re-swing-a 1.3s ease-in-out infinite alternate; }
+@keyframes sh-re-swing-a { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+.sh-re--main .sh-re-motion { transform-origin: 0 -200px; animation: sh-re-swing-b 3s ease-in-out infinite alternate; }
+@keyframes sh-re-swing-b { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
+.sh-re--splashdown .sh-re-motion { animation: sh-re-dropin 0.7s cubic-bezier(0.5, 0, 1, 0.7) both, sh-re-bob 2.6s ease-in-out 0.7s infinite; }
+@keyframes sh-re-dropin { from { transform: translateY(-330px); } 80% { transform: translateY(14px); } to { transform: translateY(0); } }
+@keyframes sh-re-bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(6px) rotate(4deg); } }
+
+.sh-re-stub { animation: sh-re-stub 3.2s cubic-bezier(0.2, 0.6, 0.4, 1) 0.3s both; }
+@keyframes sh-re-stub { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-150px) rotate(8deg); opacity: 0.85; } }
+.sh-re-seppuff { transform-box: fill-box; transform-origin: center; animation: sh-re-seppuff 0.9s ease-out 0.3s both; }
+@keyframes sh-re-seppuff { 0% { transform: scale(0.2); opacity: 0; } 30% { opacity: 0.95; } 100% { transform: scale(2.2); opacity: 0; } }
+
+.sh-re-plasma { transform-origin: 0 40px; }
+.sh-re--steep .sh-re-plasma { transform: scale(1.25, 1.12); }
+.sh-re-plasma-a { transform-origin: 0 40px; animation: sh-re-pl-a 0.12s ease-in-out infinite alternate; }
+.sh-re-plasma-b { transform-origin: 0 40px; animation: sh-re-pl-b 0.09s ease-in-out infinite alternate; }
+@keyframes sh-re-pl-a { from { transform: scale(1, 1); } to { transform: scale(1.05, 0.9); } }
+@keyframes sh-re-pl-b { from { transform: scale(0.94, 1.08); } to { transform: scale(1.04, 0.92); } }
+.sh-re-bow { animation: sh-ion-pulse 0.15s ease-in-out infinite alternate; }
+.sh-re--shallow .sh-re-plasma, .sh-re--shallow .sh-re-bow { animation: sh-re-fade 3.4s ease-in-out both; }
+@keyframes sh-re-fade { 0% { opacity: 0.2; } 30%, 45% { opacity: 0.9; } 75%, 100% { opacity: 0; } }
+.sh-re-skipline { stroke-dasharray: 10 12; animation: sh-re-skipline 0.8s linear infinite; }
+@keyframes sh-re-skipline { to { stroke-dashoffset: -22; } }
+.sh-re-overheat { opacity: 0; mix-blend-mode: screen; animation: sh-re-overheat 0.45s ease-in-out infinite alternate; pointer-events: none; }
+@keyframes sh-re-overheat { from { opacity: 0.04; } to { opacity: 0.3; } }
+.sh-re-streak { animation: sh-re-streak 0.6s linear infinite; }
+@keyframes sh-re-streak { from { transform: translateY(700px); } to { transform: translateY(-400px); } }
+
+.sh-chute { animation: sh-chute-open 0.75s cubic-bezier(0.3, 1.5, 0.5, 1) both; }
+@keyframes sh-chute-open { 0% { transform: scale(0.1, 0.25); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1, 1); opacity: 1; } }
+.sh-chute-breathe { animation: sh-chute-breathe 1.1s ease-in-out infinite alternate; }
+@keyframes sh-chute-breathe { from { transform: scale(0.97, 1.03); } to { transform: scale(1.04, 0.97); } }
+.sh-re-cloudrise { animation: sh-re-cloudrise 1.5s linear infinite; }
+.sh-re--main .sh-re-cloudrise { animation-duration: 6s; }
+@keyframes sh-re-cloudrise { from { transform: translateY(0); } to { transform: translateY(-600px); } }
+
+.sh-re-wave { animation: sh-re-wave 2.6s linear infinite; }
+.sh-re-wave--front { animation-duration: 3.6s; animation-direction: reverse; }
+@keyframes sh-re-wave { from { transform: translateX(0); } to { transform: translateX(80px); } }
+.sh-re-boat { animation: sh-re-boat 9s ease-out both; }
+@keyframes sh-re-boat { from { transform: translate(110px, 0); } to { transform: translate(0, 0); } }
+.sh-re-splash { transform-origin: 200px 412px; animation: sh-re-splash 1s ease-out 0.55s both; }
+@keyframes sh-re-splash {
+  0% { transform: scale(0.3, 0); opacity: 0; }
+  30% { transform: scale(1, 1.05); opacity: 1; }
+  100% { transform: scale(1.3, 0); opacity: 0; }
+}
+.sh-re-drop { opacity: 0; animation: sh-re-dropfly 0.95s ease-out 0.6s both; }
+@keyframes sh-re-dropfly {
+  0% { transform: translate(0, 0); opacity: 1; }
+  55% { transform: translate(var(--dx), var(--dy)); opacity: 1; }
+  100% { transform: translate(calc(var(--dx) * 1.35), 10px); opacity: 0; }
+}
+.sh-re-ring { opacity: 0; transform-origin: 200px 412px; animation: sh-re-ring 3s ease-out 0.7s infinite; }
+@keyframes sh-re-ring { 0% { transform: scale(0.3); opacity: 0.9; } 100% { transform: scale(1.7); opacity: 0; } }
+.sh-re-bag { animation: sh-re-bag 0.45s cubic-bezier(0.3, 1.7, 0.5, 1) both; }
+@keyframes sh-re-bag { from { transform: scale(0); } to { transform: scale(1); } }
+.sh-re-flotsam { animation: sh-re-flotsam 3s ease-in-out infinite alternate; }
+@keyframes sh-re-flotsam { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(5px) rotate(2deg); } }
+
+/* ---------- Preview gallery ---------- */
+.sh-pv { height: 100%; overflow-y: auto; padding: 16px clamp(12px, 3vw, 32px) 64px; background: radial-gradient(120% 80% at 70% 0%, #2a1d6b 0%, #101b3d 45%, #0a1128 100%); }
+.sh-pv h1 { font-family: var(--font-title, system-ui); color: #ffd447; -webkit-text-stroke: 2px #111326; paint-order: stroke fill; font-size: clamp(22px, 4vw, 36px); margin: 0 0 4px; }
+.sh-pv h2 { font-family: var(--font-title, system-ui); color: #f5f7ff; font-size: clamp(18px, 3vw, 24px); margin: 28px 0 10px; }
+.sh-pv p { margin: 0 0 12px; color: #b9c4dc; font-size: 14px; }
+.sh-pv-stage { position: relative; border: 4px solid #111326; border-radius: 22px; box-shadow: 0 8px 0 #111326; overflow: hidden; background: radial-gradient(90% 90% at 30% 20%, #3a2a8c 0%, #162458 50%, #0a1128 100%); padding: clamp(8px, 3vw, 28px); }
+.sh-pv-stage--tight { padding: 0; }
+.sh-pv-ship { max-width: 980px; margin: 0 auto; }
+.sh-pv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px 18px; margin-top: 14px; }
+.sh-pv-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sh-pv-label { flex: 0 0 100%; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #38d9d0; }
+.sh-pv-chip { font-weight: 800; font-size: 13px; color: #f5f7ff; background: #1c2a5c; border: 3px solid #111326; border-radius: 12px; padding: 6px 11px; box-shadow: 0 3px 0 #111326; cursor: pointer; transition: transform 0.08s; }
+.sh-pv-chip:active { transform: translateY(2px); box-shadow: 0 1px 0 #111326; }
+.sh-pv-chip:focus-visible { outline: 3px solid #ffd447; outline-offset: 2px; }
+.sh-pv-chip[aria-pressed="true"] { background: #ff8c32; color: #111326; }
+.sh-pv-range { flex: 1 1 140px; accent-color: #ff8c32; min-width: 120px; }
+.sh-pv-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px; align-items: start; }
+.sh-pv-scene { max-width: 420px; margin: 0 auto; }
+.sh-pv-bits { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-around; padding: 18px; }
+.sh-pv-bits figure { margin: 0; text-align: center; color: #b9c4dc; font-size: 12px; font-weight: 700; }

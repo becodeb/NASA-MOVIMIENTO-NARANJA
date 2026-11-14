@@ -16,8 +16,9 @@
       "id": "engine",
       "title": "Motor de reglas de la misión (valores del documento) + tests",
       "weight": 8,
-      "status": "doing",
-      "model": "Sonnet"
+      "status": "done",
+      "model": "Sonnet",
+      "doneAt": "2026-11-14T17:15:00-03:00"
     },
     {
       "id": "worlds",
@@ -31,8 +32,9 @@
       "id": "ships",
       "title": "Naves: nave modular, cohete de lanzamiento, cápsula de reentrada",
       "weight": 9,
-      "status": "doing",
-      "model": "Fable"
+      "status": "done",
+      "model": "Fable",
+      "doneAt": "2026-11-14T17:15:00-03:00"
     },
     {
       "id": "avatar",
@@ -46,14 +48,14 @@
       "id": "intro",
       "title": "Menú principal, intro de la misión e idiomas (EN/ES)",
       "weight": 5,
-      "status": "pending",
+      "status": "doing",
       "model": "Sonnet"
     },
     {
       "id": "level1",
       "title": "Nivel 1 — Construí tu nave (5 sistemas, informe de ingeniería)",
       "weight": 10,
-      "status": "pending",
+      "status": "doing",
       "model": "Sonnet"
     },
     {
@@ -67,14 +69,14 @@
       "id": "level2",
       "title": "Nivel 2 — Saturno: 6 emergencias + 4 investigaciones",
       "weight": 12,
-      "status": "pending",
+      "status": "doing",
       "model": "Sonnet"
     },
     {
       "id": "level3",
       "title": "Nivel 3 — Regreso: Titán, rutas y reentrada",
       "weight": 10,
-      "status": "pending",
+      "status": "doing",
       "model": "Sonnet"
     },
     {
@@ -137,6 +139,18 @@
       "level": "success",
       "title": "Galaxia y mundos listos",
       "body": "Fondo espacial animado con nebulosas y estrellas fugaces, Saturno con anillos y hexágono polar, Titán, Encélado con géiseres, la Tierra girando y el mapa de rutas. Vista previa: nasa.becode.com.ar/?preview=worlds"
+    },
+    {
+      "at": "2026-11-14T17:14:00-03:00",
+      "level": "success",
+      "title": "Naves listas",
+      "body": "La nave cambia según las 5 decisiones del jugador (casco, motores, energía solar o nuclear, soporte vital, antenas), más el cohete de despegue y la cápsula de reentrada con paracaídas. Vista previa: nasa.becode.com.ar/?preview=ships"
+    },
+    {
+      "at": "2026-11-14T17:15:00-03:00",
+      "level": "success",
+      "title": "Reglas de la misión listas",
+      "body": "Toda la simulación usa los números del documento del equipo y está verificada con los ejemplos del documento. Arranca el armado de los 3 niveles jugables."
     }
   ]
 }
