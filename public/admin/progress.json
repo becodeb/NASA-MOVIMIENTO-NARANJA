@@ -104,7 +104,7 @@
       "id": "polish",
       "title": "Pulido: sonido, celular, accesibilidad, QA completo",
       "weight": 6,
-      "status": "pending",
+      "status": "doing",
       "model": "Opus"
     },
     {
@@ -208,6 +208,12 @@
       "level": "success",
       "title": "Materiales de envío listos",
       "body": "Texto completo en inglés para la página de NASA (resumen, detalles, uso de IA, fuentes de NASA, referencias) y un esquema de 7 diapositivas. Juego disponible en 4 idiomas. Queda la ronda final de pruebas y pulido."
+    },
+    {
+      "at": "2026-11-14T17:44:42-03:00",
+      "level": "info",
+      "title": "Pulido de diseño aplicado",
+      "body": "Se reemplazaron todos los emojis por un set de 88 íconos dibujados con el estilo del juego, se reescribieron textos genéricos en los 4 idiomas y los avisos ya no tapan botones en el celular."
     }
   ]
 }
