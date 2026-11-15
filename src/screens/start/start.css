@@ -37,6 +37,7 @@
 @keyframes st-float { 50% { translate: 0 -14px; } }
 @keyframes st-pop-up { from { transform: translateY(60%); opacity: 0; } to { transform: none; opacity: 1; } }
 
+.st-menu__note { margin: 18px 0 0; max-width: 46ch; font-size: 12px; line-height: 1.4; opacity: .75; }
 .st-menu__main { position: relative; z-index: 2; width: min(520px, 100%); display: flex; flex-direction: column; align-items: stretch; }
 .st-title { margin: 0; display: flex; flex-direction: column; align-items: flex-start; line-height: .95; rotate: -2deg; animation: st-title-in .9s cubic-bezier(.3, 1.5, .5, 1) both; }
 .st-title span { position: relative; display: block; white-space: nowrap; font-family: var(--font-title); letter-spacing: 1px; background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }

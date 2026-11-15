@@ -84,6 +84,7 @@ export function Menu() {
             <button className="btn btn--metal st-menu__btn" onClick={() => game.go('howto')}><Icon name="manual" size={22} /> {t('st.menu.howto')}</button>
           </div>
         </nav>
+        <p className="st-menu__note fine">{t('st.menu.note')}</p>
       </main>
 
       {confirmNew && (

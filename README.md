@@ -1,54 +1,40 @@
-# React + TypeScript + Vite
+# Space Odyssey: Mission Saturn
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An educational browser game for NASA Space Apps Challenge 2026. You design a ship, keep four astronauts alive at Saturn, and bring them home. It is made for students aged 15 to 18.
 
-Currently, two official plugins are available:
+- **Play:** https://nasa.becode.com.ar
+- **30-second demo (English captions):** https://nasa.becode.com.ar/media/space-odyssey-trailer.mp4
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What it is
 
-## Expanding the ESLint configuration
+The game is one persistent mission in three levels:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Design.** Pick the structure, propulsion, power, life support and communications under a budget of 105 credits and a launch mass limit of 130.
+2. **Saturn.** Survive six months: six technical emergencies and four science investigations.
+3. **Return.** Choose a route, optionally use a Titan gravity assist, and fly the capsule re-entry.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Nothing resets between levels. Every decision shows its consequence and a short explanation of why. The game runs in English, Spanish, Brazilian Portuguese and French, with Easy and Hard modes.
+
+All numbers are simplified, normalized game units, not real mission data. The crewed Saturn mission is hypothetical. The science notes rely on NASA sources, listed in the submission.
+
+## Use of AI (Super Intelligence) disclosure
+
+- **Designed by the team:** the concept, the mission rules and every number, the science content and the educational goals. The team also playtested and accepted the result.
+- **Written with AI coding assistance (Anthropic Claude models):** the source code in this repository. That includes the rules engine, the screens, all art and animation (drawn with SVG, Canvas and CSS), the synthesized sound and music, the translations, and the trailer.
+- **Assets:** the game contains no image, audio or video files made by generative-image or generative-audio tools. Everything you see and hear is rendered by this code at runtime.
+- **The trailer:** a screen capture of the game. It carries a visible "Made with AI-assisted code (Claude)" mark and an MP4 metadata note.
+
+## Develop
+
+```bash
+npm install
+npm run dev      # game at http://localhost:5173
+npm test         # rules-engine tests (Vitest)
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Production runs `server/server.mjs` (Node 22). It serves `dist/` and the team-feedback API. See the `Dockerfile`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Tech
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+TypeScript, React 19, Vite, Vitest, the Web Audio API, and Google Fonts (Lilita One and Nunito, under the SIL Open Font License).
