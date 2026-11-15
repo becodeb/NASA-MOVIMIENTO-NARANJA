@@ -4,6 +4,8 @@ import type { ActionResult, Checkpoint, Difficulty, MissionState, Params } from 
 import { createCheckpoint, restoreCheckpoint, canRestore } from '../engine/engine'
 import { DEFAULT_AVATAR, loadAvatar, type AvatarConfig } from '../avatar'
 import { play } from './sfx'
+import { setDestination, type Destination } from '../engine/destination'
+import { setVariant } from '../i18n'
 
 /** Screen flow:
  * opening → menu → intro → avatar → level1 → launch → arrival → level2 → departure → level3 → reentry → report
@@ -17,6 +19,8 @@ export interface Toast { id: number; kind: 'ok' | 'bad' | 'info'; msgKey: string
 export interface GameState {
   screen: ScreenId
   difficulty: Difficulty
+  /** Chosen mission destination (menu). A mission in progress only continues under its own destination. */
+  destination: Destination
   avatar: AvatarConfig
   mission: MissionState | null
   checkpoints: Checkpoint[]
@@ -29,7 +33,7 @@ const SAVE_KEY = 'so.save.v1'
 
 function initial(): GameState {
   const base: GameState = {
-    screen: 'opening', difficulty: 'easy', avatar: loadAvatar() ?? DEFAULT_AVATAR,
+    screen: 'opening', difficulty: 'easy', destination: 'saturn', avatar: loadAvatar() ?? DEFAULT_AVATAR,
     mission: null, checkpoints: [], toasts: [], seen: {},
   }
   try {
@@ -43,6 +47,14 @@ function initial(): GameState {
 }
 
 let state: GameState = initial()
+
+/** Point the engine tables and the text variant at the chosen destination. */
+function syncDestination() {
+  const d: Destination = state.destination === 'mars' ? 'mars' : 'saturn'
+  setDestination(d)
+  setVariant(d === 'mars' ? 'mars' : null)
+}
+syncDestination()
 const listeners = new Set<() => void>()
 let toastSeq = 1
 
@@ -57,6 +69,7 @@ function persist() {
 function set(patch: Partial<GameState>) {
   const prev = state
   state = { ...state, ...patch }
+  if (patch.destination && patch.destination !== prev.destination) syncDestination()
   // Sound cues driven by state transitions (screens stay sound-agnostic).
   if (patch.mission && patch.mission.activeEmergency && patch.mission.activeEmergency !== prev.mission?.activeEmergency) play('alarm')
   if (patch.screen && patch.screen !== prev.screen) {
@@ -77,6 +90,7 @@ export function useGame(): GameState {
 export const game = {
   go(screen: ScreenId) { set({ screen }); window.scrollTo?.(0, 0); document.getElementById('app-scroll')?.scrollTo(0, 0) },
   setDifficulty(difficulty: Difficulty) { set({ difficulty }) },
+  setDestination(destination: Destination) { set({ destination }) },
   setAvatar(avatar: AvatarConfig) { set({ avatar }) },
   markSeen(key: string) { set({ seen: { ...state.seen, [key]: true } }) },
 

@@ -3,10 +3,11 @@ import { game, useGame } from '../../game/store'
 import { useT } from '../../i18n'
 import { LangSwitch } from '../../game/ui'
 import { Icon } from '../../game/icons'
-import { SpaceBackdrop, Saturn } from '../../art/worlds'
+import { SpaceBackdrop } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { Astronaut, AVATAR_STORAGE_KEY } from '../../avatar'
 import { Bubble, hasMission, resumeScreen } from './common'
+import { World } from '../../game/World'
 
 const SHIP = { structure: 'reinforced', propulsion: 'combined', power: 'nuclear', lifeSupport: 'regenerative', comms: 'redundant' } as const
 
@@ -16,10 +17,12 @@ function avatarCustomized(): boolean {
 
 export function Menu() {
   const t = useT()
-  const { avatar, difficulty, mission } = useGame()
+  const { avatar, difficulty, mission, destination } = useGame()
   const [confirmNew, setConfirmNew] = useState(false)
   const [hello, setHello] = useState(false)
   const inProgress = hasMission(mission)
+  // A saved mission only continues under its own destination; picking the other planet starts a new one.
+  const resumable = inProgress && (mission.destination ?? 'saturn') === destination
 
   const startNew = () => {
     setConfirmNew(false)
@@ -27,18 +30,19 @@ export function Menu() {
     game.go(avatarCustomized() ? 'level1' : 'intro')
   }
   const play = () => {
-    if (inProgress && mission.level > 1) { setConfirmNew(true); return }
+    if (inProgress && (mission.level > 1 || !resumable)) { setConfirmNew(true); return }
     if (inProgress) game.restart()
     game.go(avatarCustomized() ? 'level1' : 'intro')
   }
   const modes = ['easy', 'hard'] as const
+  const dests = ['saturn', 'mars'] as const
 
   return (
     <div className="st-menu">
       <SpaceBackdrop fixed />
       <div className="st-menu__lang"><LangSwitch /></div>
 
-      <div className="st-menu__saturn" aria-hidden><Saturn size="100%" tilt={20} roll={-14} glow /></div>
+      <div className="st-menu__saturn" aria-hidden><World size="100%" tilt={20} roll={-14} glow /></div>
       <div className="st-menu__ship" aria-hidden><Spaceship config={SHIP} thrust="both" width="100%" /></div>
       <button type="button" className="st-menu__astro" onClick={() => setHello(true)} aria-label={t('st.menu.hello')}>
         {hello && <Bubble tail="bottom" className="st-menu__hello">{t('st.menu.hello')}</Bubble>}
@@ -53,13 +57,25 @@ export function Menu() {
         <p className="st-menu__tag">{t('st.menu.tagline')}</p>
 
         <nav className="st-menu__btns" aria-label="Menu">
-          {inProgress && (
+          {resumable && (
             <button className="btn btn--green st-menu__btn st-pop" style={{ ['--d' as string]: '0.45s' }} onClick={() => game.go(resumeScreen(mission))}>
               <Icon name="go" size={22} /> {t('st.menu.continue')}
               <small>{t('st.menu.continueSub', { m: mission.monthsElapsed, l: mission.level })}</small>
             </button>
           )}
           <button className="btn btn--yellow st-menu__btn st-menu__btn--big st-pop" style={{ ['--d' as string]: '0.55s' }} onClick={play}><Icon name="go" size={30} /> {t('st.menu.play')}</button>
+
+          <div className="st-diff st-dest surface-paper st-pop" style={{ ['--d' as string]: '0.6s' }} role="group" aria-label={t('st.menu.dest')}>
+            <div className="st-diff__seg">
+              {dests.map(d => (
+                <button key={d} type="button" className={`st-diff__opt st-dest__opt st-dest__opt--${d}`} aria-pressed={destination === d}
+                  onClick={() => game.setDestination(d)}>
+                  <Icon name={d} size={22} /> {t(`st.menu.dest.${d}`)}
+                </button>
+              ))}
+            </div>
+            <p className="st-diff__same fine">{t(`st.menu.dest.${destination}.d`)}</p>
+          </div>
 
           <div className="st-diff surface-paper st-pop" style={{ ['--d' as string]: '0.65s' }} role="group" aria-label={t('st.menu.diff')}>
             <div className="st-diff__seg">

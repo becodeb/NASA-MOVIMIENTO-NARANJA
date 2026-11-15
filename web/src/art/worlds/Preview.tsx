@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import {
   Earth,
+  Deimos,
   Enceladus,
+  Mars,
   MicrometeoroidStreak,
+  Phobos,
   RingParticles,
   Saturn,
   SolarSystemMap,
   SpaceBackdrop,
   Sun,
   Titan,
+  type MapDestination,
   type MapRoute,
   type RouteId,
 } from './index'
@@ -25,6 +29,8 @@ export default function Preview() {
   const [route, setRoute] = useState<RouteId>('balanced')
   const [progress, setProgress] = useState(0.35)
   const [flyby, setFlyby] = useState(true)
+  const [dest, setDest] = useState<MapDestination>('saturn')
+  const [returning, setReturning] = useState(false)
   const [impact, setImpact] = useState(0)
   const [plumes, setPlumes] = useState(true)
 
@@ -100,6 +106,36 @@ export default function Preview() {
             </div>
           </section>
 
+          <section className="sw-pv__card sw-pv__card--wide">
+            <h2>Mars + Phobos + Deimos</h2>
+            <p>
+              Same box and globe size as Saturn (<code>fit="saturn"</code>, default) so it is a drop-in swap; <code>fit="tight"</code> fills the box for
+              small icons. Uses the Saturn <code>tilt</code> / <code>roll</code> sliders above: tilt leans the polar cap towards you.
+            </p>
+            <div className="sw-pv__stage" style={{ position: 'relative' }}>
+              <Mars size="min(92vw, 460px)" tilt={tilt} roll={roll} animate={animate} />
+              <div className="sw-pv__hero-moon" style={{ left: '8%', bottom: '10%' }}>
+                <Phobos size="clamp(56px, 10vw, 100px)" animate={animate} />
+              </div>
+              <div className="sw-pv__hero-moon" style={{ right: '10%', top: '8%' }}>
+                <Deimos size="clamp(44px, 8vw, 80px)" animate={animate} />
+              </div>
+            </div>
+            <div className="sw-pv__stage" style={{ gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+              <Mars size={200} tilt={0} roll={0} animate={animate} glow={false} />
+              <Mars size={200} tilt={27} roll={-25} animate={animate} glow={false} />
+              <Mars size={200} tilt={58} roll={8} animate={animate} glow={false} />
+              <Mars size={72} animate={animate} glow={false} />
+              <Mars size={200} fit="tight" animate={animate} />
+              <Mars size={60} fit="tight" animate={animate} glow={false} />
+              <Mars size={32} fit="tight" animate={false} glow={false} />
+              <Phobos size={190} animate={animate} />
+              <Deimos size={190} animate={animate} />
+              <Phobos size={60} animate={animate} glow={false} />
+              <Deimos size={60} animate={animate} glow={false} />
+            </div>
+          </section>
+
           <section className="sw-pv__card">
             <h2>Earth</h2>
             <p>Scrolling continents, cloud belts, 23.4° axial tilt, teal atmosphere.</p>
@@ -156,11 +192,22 @@ export default function Preview() {
                 <input type="checkbox" checked={flyby} onChange={(e) => setFlyby(e.target.checked)} />
                 showTitanFlyby
               </label>
+              {(['saturn', 'mars'] as MapDestination[]).map((d) => (
+                <button key={d} type="button" className="sw-pv__btn" aria-pressed={dest === d} onClick={() => setDest(d)}>
+                  {d}
+                </button>
+              ))}
+              <label>
+                <input type="checkbox" checked={returning} onChange={(e) => setReturning(e.target.checked)} />
+                returning
+              </label>
             </div>
             <SolarSystemMap
               routes={routes}
               progress={progress}
               showTitanFlyby={flyby}
+              destination={dest}
+              returning={returning}
               note="Órbitas y distancias no están a escala"
               animate={animate}
             />

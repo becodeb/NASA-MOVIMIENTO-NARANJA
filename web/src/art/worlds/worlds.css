@@ -369,3 +369,17 @@
 @media (prefers-reduced-motion: reduce) {
   .sw-world *, .sw-backdrop *, .sw-impact-layer * { animation: none !important; }
 }
+
+/* ───────── Mars / Phobos / Deimos ───────── */
+.sw-anim .sw-mars-spin { animation: sw-mars-spin 90s linear infinite; will-change: transform; }
+@keyframes sw-mars-spin {
+  from { transform: translateX(-300px); }
+  to { transform: translateX(0px); }
+}
+.sw-anim .sw-mars-air { transform-origin: 0px 0px; animation: sw-haze 6s ease-in-out infinite; }
+.sw-anim .sw-moon-wobble { transform-origin: 0px 0px; animation: sw-moon-wobble 11s ease-in-out infinite alternate; }
+.sw-anim .sw-moon-wobble--slow { animation-duration: 16s; }
+@keyframes sw-moon-wobble {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(5deg); }
+}

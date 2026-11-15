@@ -13,7 +13,8 @@ export const LANGS: { id: Lang; label: string }[] = [
 type Dict = Record<string, string>
 type Bundle = Partial<Record<Lang, Dict>>
 
-const modules = import.meta.glob<{ default: Bundle }>('../**/strings.ts', { eager: true })
+// strings.mars.ts files hold 'key@mars' overrides used while the Mars mission is active (see setVariant).
+const modules = import.meta.glob<{ default: Bundle }>(['../**/strings.ts', '../**/strings.mars.ts'], { eager: true })
 const dicts: Record<Lang, Dict> = { en: {}, es: {}, 'pt-BR': {}, fr: {} }
 for (const mod of Object.values(modules)) {
   for (const [lang, d] of Object.entries(mod.default) as [Lang, Dict][]) Object.assign(dicts[lang], d)
@@ -37,14 +38,24 @@ export function setLang(l: Lang) {
   listeners.forEach(f => f())
 }
 
+let variant: string | null = null
+/** Content variant (e.g. 'mars'): t() prefers 'key@variant' when it exists. */
+export function setVariant(v: string | null) {
+  if (v === variant) return
+  variant = v
+  listeners.forEach(f => f())
+}
+export function getVariant(): string | null { return variant }
+
 export function t(key: string, params?: Record<string, string | number>): string {
-  let s = dicts[current][key] ?? dicts.en[key] ?? key
+  const vk = variant ? `${key}@${variant}` : null
+  let s = (vk && (dicts[current][vk] ?? dicts.en[vk])) || (dicts[current][key] ?? dicts.en[key] ?? key)
   if (params) for (const [k, v] of Object.entries(params)) s = s.split(`{${k}}`).join(String(v))
   return s
 }
 
 /** React hook: re-renders on language change and returns `t`. */
 export function useT() {
-  useSyncExternalStore(cb => { listeners.add(cb); return () => listeners.delete(cb) }, () => current)
+  useSyncExternalStore(cb => { listeners.add(cb); return () => listeners.delete(cb) }, () => `${current}|${variant ?? ''}`)
   return t
 }

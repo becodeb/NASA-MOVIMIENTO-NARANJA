@@ -7,11 +7,12 @@ import { Icon, type IconName } from '../../game/icons'
 import { executeReturn, routeOptions, titanAvailability } from '../../engine/engine'
 import { PARAMS, ROUTES } from '../../engine/data'
 import type { ActionResult, MissionState, RouteId, RouteOption } from '../../engine/types'
-import { Saturn, SolarSystemMap, SpaceBackdrop, Titan, usePrefersReducedMotion, type MapRoute } from '../../art/worlds'
+import { SolarSystemMap, SpaceBackdrop, usePrefersReducedMotion, type MapRoute } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { drainers, r1, useTP } from './helpers'
 import { Hint, LevelStamp, Line } from './parts'
 import './level3.css'
+import { World, MoonA, useDestination } from '../../game/World'
 
 const ROUTE_IDS: RouteId[] = ['fast', 'balanced', 'slow']
 const ROUTE_COLOR: Record<RouteId, string> = { fast: '#F46AA7', balanced: '#38D9D0', slow: '#FFD447' }
@@ -99,6 +100,7 @@ export function Level3() {
   const { mission, difficulty, checkpoints } = useGame()
   const reduced = usePrefersReducedMotion()
   const [wantTitan, setWantTitan] = useState(false)
+  const dest = useDestination()
   const [sel, setSel] = useState<RouteId | null>(null)
   const [transit, setTransit] = useState<{ before: MissionState; result: ActionResult } | null>(null)
   const [p, setP] = useState(0)
@@ -171,7 +173,7 @@ export function Level3() {
           <Hud mission={live} compact />
           <section className="panel l3-stage l3-transit">
             <div className="l3-transit__map">
-              <SolarSystemMap routes={routes} activeRoute={routeId} progress={prog} showTitanFlyby={mission.titanAssist} note={t('l3.map.note')} labels={{ sun: t('l3.map.sun'), earth: t('l3.map.earth'), saturn: t('l3.map.saturn'), titan: 'Titan' }} />
+              <SolarSystemMap routes={routes} activeRoute={routeId} progress={prog} destination={dest} showTitanFlyby={mission.titanAssist} note={t('l3.map.note')} labels={{ sun: t('l3.map.sun'), earth: t('l3.map.earth'), saturn: t('l3.map.saturn'), titan: 'Titan' }} />
             </div>
             <div className="l3-transit__side">
               <div className="l3-clock" aria-live="off">
@@ -215,6 +217,7 @@ export function Level3() {
   if (deadEnd) return <DeadEnd mission={mission} checkpoints={checkpoints.length} />
 
   // ---------------------------------------------------------------- planning
+  const assist = dest === 'saturn'
   const routes: MapRoute[] = ROUTE_IDS.map(id => ({ id, color: ROUTE_COLOR[id], highlighted: sel === id, dashed: id === 'slow' }))
   const chosen = opts.find(o => o.id === sel && o.feasible)
   const titanBackfires = titanOn && !opts.some(o => o.feasible) && anyWithout
@@ -230,13 +233,14 @@ export function Level3() {
           <header className="l3-stage__head"><span className="l3-num">1</span><h2 id="l3-s1" className="l3-h2">{t('l3.s1.title')}</h2></header>
           <div className="l3-s1">
             <div className="l3-s1__art" aria-hidden>
-              <Saturn size="100%" tilt={22} />
-              <div className="l3-s1__titan"><Titan size="100%" /></div>
+              <World size="100%" tilt={22} />
+              {assist && <div className="l3-s1__titan"><MoonA size="100%" /></div>}
               <svg className="l3-s1__arc" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,90 Q40,95 70,55 T100,8" /></svg>
               <div className="l3-s1__ship"><Spaceship config={mission.config} width="100%" title="ship" /></div>
             </div>
             <div className="l3-s1__body">
               <p>{t('l3.s1.intro')}</p>
+              {assist && <>
               <div className="l3-math">
                 <div><b>−{PARAMS.titanPrep}</b><span>{t('l3.s1.prep')}</span></div>
                 <div><b>+{PARAMS.titanSaving}</b><span>{t('l3.s1.save')}</span></div>
@@ -250,7 +254,8 @@ export function Level3() {
                   <b><Icon name="gravity-assist" size={22} /> {t('l3.s1.assist')}</b><span>{t('l3.s1.assist.d')}</span>
                 </button>
               </div>
-              {av && !av.available && av.reasonKey && <Line kind="warn" role="alert" icon="lock">{tp(av.reasonKey, av.params)}</Line>}
+              </>}
+              {assist && av && !av.available && av.reasonKey && <Line kind="warn" role="alert" icon="lock">{tp(av.reasonKey, av.params)}</Line>}
               {titanOn && <Line icon="route">{t('l3.s1.geometry')}</Line>}
               {titanBackfires && <Line kind="warn" role="alert" icon="warning">{t('l3.s1.backfire')}</Line>}
               <Explain titleKey="l3.s1.note" textKey="l3.s1.why" />
@@ -263,7 +268,7 @@ export function Level3() {
           <header className="l3-stage__head"><span className="l3-num">2</span><h2 id="l3-s2" className="l3-h2">{t('l3.s2.title')}</h2></header>
           <p className="l3-lead">{t('l3.s2.intro')}</p>
           <div className="l3-map">
-            <SolarSystemMap routes={routes} activeRoute={sel ?? undefined} showTitanFlyby={titanOn} note={t('l3.map.note')} labels={{ sun: t('l3.map.sun'), earth: t('l3.map.earth'), saturn: t('l3.map.saturn'), titan: 'Titan' }} />
+            <SolarSystemMap routes={routes} activeRoute={sel ?? undefined} destination={dest} showTitanFlyby={titanOn} note={t('l3.map.note')} labels={{ sun: t('l3.map.sun'), earth: t('l3.map.earth'), saturn: t('l3.map.saturn'), titan: 'Titan' }} />
             <ul className="l3-legend">{ROUTE_IDS.map(id => <li key={id}><i style={{ background: ROUTE_COLOR[id] }} />{t(`l3.route.${id}.name`)} · {t('l3.card.months', { m: ROUTES[id].months })}</li>)}</ul>
           </div>
           <div className="l3-cards" role="radiogroup" aria-label={t('l3.s2.title')}>

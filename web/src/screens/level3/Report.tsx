@@ -13,6 +13,7 @@ import { Astronaut } from '../../avatar'
 import { influenceOf, keyDecisions, r1, shownChanges, useTP } from './helpers'
 import { LevelStamp } from './parts'
 import './level3.css'
+import { hasGravityAssist } from '../../engine/destination'
 
 const CLASS_COLORS: Record<Classification, { fill: string; glyph: 'star' | 'check' | 'dots' | 'retry' }> = {
   success: { fill: '#FFD447', glyph: 'star' },
@@ -161,7 +162,7 @@ function recommend(m: MissionState, sc: ScoreBreakdown): string[] {
   if (!m.flags.shelterUsed) out.push('l3.rec.protocol')
   if (m.faults.blackout) out.push('l3.rec.power')
   if ((['structure', 'propulsion', 'power', 'lifeSupport', 'navigation'] as const).some(k => m.systems[k] === 'failed')) out.push('l3.rec.systems')
-  for (const fallback of ['l3.rec.hard', 'l3.rec.explore', 'l3.rec.titan']) if (out.length < 2) out.push(fallback)
+  for (const fallback of ['l3.rec.hard', 'l3.rec.explore', ...(hasGravityAssist() ? ['l3.rec.titan'] : [])]) if (out.length < 2) out.push(fallback)
   return [...new Set(out)].slice(0, 3)
 }
 
@@ -240,7 +241,7 @@ export function Report() {
           <div className="l3-crewline">
             <span className={sc.safeReturn ? 'is-ok' : 'is-bad'}><Icon name="helmet" size={22} />{t('l3.rp.crew', { n: crewHome })}</span>
             <span><Icon name="calendar" size={22} />{t('l3.rp.months', { m: m.monthsElapsed })}</span>
-            <span><Icon name="route" size={22} />{m.route ? t(`l3.route.${m.route}.name`) : t('l3.rp.noRoute')}{m.titanAssist ? ' + Titan' : ''}</span>
+            <span><Icon name="route" size={22} />{m.route ? t(`l3.route.${m.route}.name`) : t('l3.rp.noRoute')}{m.titanAssist && m.destination !== 'mars' ? ' + Titan' : ''}</span>
           </div>
         </section>
 

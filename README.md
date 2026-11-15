@@ -2,7 +2,7 @@
 
 **Space Odyssey: Mission Saturn** is team Movimiento Naranja's entry to the NASA Space Apps Challenge 2026, challenge **Space Mission Design Game**.
 
-It is a free browser game for students aged 15 to 18. You design a ship under a fixed budget and mass limit, keep four astronauts alive through six months at Saturn, and bring them home. The ship you build, the damage you take and the supplies you spend carry over from level to level, so every decision has consequences.
+It is a free browser game for students aged 15 to 18. Pick a destination, **Saturn** (the long mission) or **Mars** (the short one), design a ship under a fixed budget and mass limit, keep four astronauts alive through six months in orbit, and bring them home. The ship you build, the damage you take and the supplies you spend carry over from level to level, so every decision has consequences.
 
 | | |
 |---|---|
@@ -31,10 +31,13 @@ It is a free browser game for students aged 15 to 18. You design a ship under a 
 | [Radioisotope Thermoelectric Generators](https://science.nasa.gov/planetary-science/programs/radioisotope-power-systems/power-radioisotope-thermoelectric-generators/) | The MMRTG, at about 110 W, is the reference for the nuclear power option. |
 | [Titan](https://science.nasa.gov/saturn/moons/titan/) and [Enceladus](https://science.nasa.gov/saturn/moons/enceladus/) | The moons investigation. |
 | [Deep Space Network](https://www.nasa.gov/communicating-with-missions/dsn/) | The mission's ground segment and its communications. |
+| [Mars Facts](https://science.nasa.gov/mars/facts/) | Mars mission: about 1.5 AU from the Sun, about 43% of Earth's sunlight, a thin CO2 atmosphere, polar ice caps and a 3 to 22 minute radio delay. |
+| [MAVEN](https://science.nasa.gov/mission/maven/) | Mars mission: the lost magnetic field and the solar-particle radiation emergency. |
+| [Mars Moons: Phobos and Deimos](https://science.nasa.gov/mars/moons/) | Mars mission: the moons investigation. |
 
 Partner agency resource: [ESA's Cassini-Huygens mission](https://www.esa.int/Science_Exploration/Space_Science/Cassini-Huygens), background for Titan.
 
-All numbers in the game are simplified, normalized game units for teaching. The crewed Saturn mission is hypothetical.
+All numbers in the game are simplified, normalized game units for teaching. Both crewed missions, to Saturn and to Mars orbit, are hypothetical.
 
 ## Use of AI
 

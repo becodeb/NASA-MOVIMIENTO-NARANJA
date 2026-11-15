@@ -4,10 +4,11 @@ import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
 import { Hud, LangSwitch, Squiggle } from '../../game/ui'
 import { Icon } from '../../game/icons'
-import { Earth, RingParticles, Saturn, SpaceBackdrop } from '../../art/worlds'
+import { Earth, RingParticles, SpaceBackdrop } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { LevelComplete } from './LevelComplete'
 import { Porthole, Stage, thrustFor, useBeats, useCommanderName, usePrefersReducedMotion } from './cine'
+import { World, RingsOnly } from '../../game/World'
 
 // beats: 0 level-2 complete · 1 last look · 2 ignition · 3 briefing
 const BEATS = [3200, 3000, 3600] as const
@@ -31,8 +32,8 @@ export function Departure() {
   return (
     <Stage className={`jy-de jy-de--b${beat}`} onSkip={brief ? undefined : () => setBeat(3)} bars={!brief} scroll={brief}>
       <SpaceBackdrop fixed warp={beat === 2 ? 0.45 : 0} />
-      <div className="jy-de-saturn"><Saturn size="100%" tilt={22} roll={12} /></div>
-      <div className="jy-de-rings"><RingParticles density={0.8} speed={burning ? 2.4 : 0.4} direction={4} /></div>
+      <div className="jy-de-saturn"><World size="100%" tilt={22} roll={12} /></div>
+      <RingsOnly><div className="jy-de-rings"><RingParticles density={0.8} speed={burning ? 2.4 : 0.4} direction={4} /></div></RingsOnly>
       <div className="jy-de-earth">
         <Earth size="100%" glow />
         <span>{t('jy.de.earth')}</span>

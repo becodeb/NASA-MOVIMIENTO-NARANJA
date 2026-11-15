@@ -1,12 +1,13 @@
 // Ship interior with a panoramic window onto Saturn. Purely presentational: everything comes in as props.
 import { useEffect, useState } from 'react'
-import { Enceladus, MicrometeoroidStreak, Saturn, SpaceBackdrop, Titan } from '../../art/worlds'
+import { MicrometeoroidStreak, SpaceBackdrop } from '../../art/worlds'
 import { Sparkle, Spaceship } from '../../art/ships'
 import { Astronaut, type AstronautExpression, type AstronautPose } from '../../avatar'
 import type { AvatarConfig } from '../../avatar'
 import type { EmergencyId, MissionState } from '../../engine/types'
 import { Icon } from '../../game/icons'
 import { useT } from '../../i18n'
+import { World, MoonA, MoonB } from '../../game/World'
 
 export interface StageProps {
   mission: MissionState
@@ -57,11 +58,11 @@ export function Stage(p: StageProps) {
       <div className="l2-window">
         <SpaceBackdrop tint={alarm ? 'alarm' : 'calm'} density={0.8} />
         <div className="l2-saturn" aria-hidden>
-          <Saturn size="100%" tilt={22} roll={-14} />
+          <World size="100%" tilt={22} roll={-14} />
           {scanning && <div className="l2-scan" />}
         </div>
-        <div className="l2-titan" aria-hidden><Titan size="100%" /></div>
-        {m.science.collected.moons && <div className="l2-ench" aria-hidden><Enceladus size="100%" /></div>}
+        <div className="l2-titan" aria-hidden><MoonA size="100%" /></div>
+        {m.science.collected.moons && <div className="l2-ench" aria-hidden><MoonB size="100%" /></div>}
         <div className="l2-ship">
           <Spaceship config={m.config} damage={damage} alarm={alarm} antenna={antenna} width="100%" title="Your ship" />
           {sending && (

@@ -4,11 +4,12 @@ import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
 import { Explain, LangSwitch, Squiggle } from '../../game/ui'
 import { Icon, type IconName } from '../../game/icons'
-import { RingParticles, Saturn, SpaceBackdrop } from '../../art/worlds'
+import { RingParticles, SpaceBackdrop } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { PARAMS } from '../../engine/data'
 import { LevelComplete } from './LevelComplete'
 import { Porthole, Stage, tripNumbers, useBeats, useCommanderName, usePrefersReducedMotion } from './cine'
+import { World, RingsOnly } from '../../game/World'
 
 // beats: 0 level-1 complete · 1 level-2 title · 2 report
 const BEATS = [3200, 3400] as const
@@ -58,8 +59,8 @@ export function Arrival() {
   return (
     <Stage className={`jy-ar jy-ar--b${beat}`} onSkip={report ? undefined : () => setBeat(2)} bars={!report} scroll={report}>
       <SpaceBackdrop fixed />
-      <div className="jy-ar-saturn"><Saturn size="100%" tilt={18} roll={-14} /></div>
-      <div className="jy-ar-rings"><RingParticles density={1.1} speed={0.5} direction={-10} /></div>
+      <div className="jy-ar-saturn"><World size="100%" tilt={18} roll={-14} /></div>
+      <RingsOnly><div className="jy-ar-rings"><RingParticles density={1.1} speed={0.5} direction={-10} /></div></RingsOnly>
       <div className="jy-ar-ship"><Spaceship config={mission.config} width="100%" title={t('jy.ship.aria')} /></div>
 
       {beat === 0 && <LevelComplete level={1} />}

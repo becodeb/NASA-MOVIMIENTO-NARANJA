@@ -135,6 +135,8 @@ export interface MissionState {
   flags: MissionFlags
   // Level 3 progress
   titanAssist: boolean
+  /** Mission destination (missing in saves from before Mars existed = Saturn). */
+  destination?: 'saturn' | 'mars'
   route: RouteId | null
   reentry: ReentryState
 }

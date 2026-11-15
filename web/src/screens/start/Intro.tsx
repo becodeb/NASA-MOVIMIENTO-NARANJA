@@ -4,10 +4,11 @@ import { useT } from '../../i18n'
 import { LangSwitch } from '../../game/ui'
 import { Icon, type IconName } from '../../game/icons'
 import { PARAMS } from '../../engine/data'
-import { SpaceBackdrop, Saturn, Titan, Enceladus, Earth } from '../../art/worlds'
+import { SpaceBackdrop, Earth } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { Astronaut, randomAvatar, type AstronautExpression, type AstronautPose } from '../../avatar'
 import { Bubble, introReturn } from './common'
+import { World, MoonA, MoonB, useDestination } from '../../game/World'
 
 const TOTAL = 5
 const FULL = { structure: 'reinforced', propulsion: 'combined', power: 'nuclear', lifeSupport: 'regenerative', comms: 'redundant' } as const
@@ -19,9 +20,11 @@ const ICONS: IconName[][] = [
   ['em-impact', 'radiation', 'light-delay', 'return-home'],
   ['probe', 'science', 'simplified'],
 ]
+const MARS_ICONS: IconName[] = ['mars', 'atmosphere', 'magnetosphere', 'moons']
 
 export function Intro() {
   const t = useT()
+  const dest = useDestination()
   const { avatar } = useGame()
   const [i, setI] = useState(1)
   const crew = useMemo(() => [avatar, randomAvatar(), randomAvatar(), randomAvatar()], [avatar])
@@ -38,12 +41,12 @@ export function Intro() {
   const bulletParams = { budget: PARAMS.budget, mass: PARAMS.launchMass }
 
   let visual: ReactNode
-  if (i === 1) visual = <div className="st-intro__vis st-intro__vis--saturn"><Saturn size="100%" tilt={22} roll={-12} glow /></div>
+  if (i === 1) visual = <div className="st-intro__vis st-intro__vis--saturn"><World size="100%" tilt={22} roll={-12} glow /></div>
   else if (i === 2) visual = (
     <div className="st-intro__vis st-intro__vis--moons">
-      <div className="st-intro__sat"><Saturn size="100%" tilt={22} roll={-12} glow /></div>
-      <div className="st-intro__titan"><Titan size="100%" /></div>
-      <div className="st-intro__enc"><Enceladus size="100%" /></div>
+      <div className="st-intro__sat"><World size="100%" tilt={22} roll={-12} glow /></div>
+      <div className="st-intro__titan"><MoonA size="100%" /></div>
+      <div className="st-intro__enc"><MoonB size="100%" /></div>
     </div>
   )
   else if (i === 3) visual = (
@@ -79,7 +82,7 @@ export function Intro() {
             {bullets > 0 && (
               <ul className="st-intro__list surface-rows">
                 {Array.from({ length: bullets }, (_, k) => (
-                  <li key={k} style={{ ['--k' as string]: k }}><Icon name={ICONS[i - 1][k]} size={26} /><span>{t(`st.intro.${i}.b${k + 1}`, bulletParams)}</span></li>
+                  <li key={k} style={{ ['--k' as string]: k }}><Icon name={(dest === 'mars' && i === 2 ? MARS_ICONS : ICONS[i - 1])[k]} size={26} /><span>{t(`st.intro.${i}.b${k + 1}`, bulletParams)}</span></li>
                 ))}
               </ul>
             )}

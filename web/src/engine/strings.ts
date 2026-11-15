@@ -230,6 +230,7 @@ const en: Record<string, string> = {
   'engine.finish.blockedWhy': 'Without a viable way home the mission cannot be completed. The crew may be safe for now, but the goal is a safe return.',
 
   // ---- return
+  'engine.titan.none': 'There is no gravity assist on this mission: the return relies on your own maneuver reserve.',
   'engine.titan.noNavigation': 'The Titan assist needs working navigation.',
   'engine.titan.noPropulsion': 'The Titan assist needs a working propulsion system.',
   'engine.titan.noManeuver': 'Not enough maneuver capacity ({maneuver}) to prepare the assist (needs {prep}).',
@@ -490,6 +491,7 @@ const es: Record<string, string> = {
   'engine.finish.blocked': 'La nave no puede iniciar el regreso: {failed}.',
   'engine.finish.blockedWhy': 'Sin una forma viable de volver, la misión no puede completarse. La tripulación puede estar a salvo por ahora, pero el objetivo es un regreso seguro.',
 
+  'engine.titan.none': 'En esta misión no hay asistencia gravitatoria: el regreso depende de tu propia reserva de maniobra.',
   'engine.titan.noNavigation': 'La asistencia de Titán necesita navegación funcionando.',
   'engine.titan.noPropulsion': 'La asistencia de Titán necesita propulsión funcionando.',
   'engine.titan.noManeuver': 'No hay maniobra suficiente ({maneuver}) para preparar la asistencia (necesita {prep}).',
@@ -748,6 +750,7 @@ const ptBR: Record<string, string> = {
   'engine.finish.blocked': 'A nave não pode iniciar o retorno: {failed}.',
   'engine.finish.blockedWhy': 'Sem um caminho viável de volta, a missão não pode ser concluída. A tripulação pode estar segura por ora, mas o objetivo é um retorno seguro.',
 
+  'engine.titan.none': 'Nesta missão não há assistência gravitacional: o retorno depende da sua própria reserva de manobra.',
   'engine.titan.noNavigation': 'A assistência gravitacional de Titã precisa de navegação funcionando.',
   'engine.titan.noPropulsion': 'A assistência gravitacional de Titã precisa de propulsão funcionando.',
   'engine.titan.noManeuver': 'Capacidade de manobra insuficiente ({maneuver}) para preparar a assistência (precisa de {prep}).',
@@ -1006,6 +1009,7 @@ const fr: Record<string, string> = {
   'engine.finish.blocked': 'Le vaisseau ne peut pas commencer le retour : {failed}.',
   'engine.finish.blockedWhy': 'Sans voie de retour viable, la mission ne peut pas être accomplie. L\'équipage est peut-être sauf pour l\'instant, mais l\'objectif est un retour sûr.',
 
+  'engine.titan.none': "Pas d'assistance gravitationnelle sur cette mission : le retour dépend de votre propre réserve de manœuvre.",
   'engine.titan.noNavigation': 'L\'assistance gravitationnelle de Titan nécessite une navigation fonctionnelle.',
   'engine.titan.noPropulsion': 'L\'assistance gravitationnelle de Titan nécessite une propulsion fonctionnelle.',
   'engine.titan.noManeuver': 'Capacité de manœuvre insuffisante ({maneuver}) pour préparer l\'assistance (il faut {prep}).',

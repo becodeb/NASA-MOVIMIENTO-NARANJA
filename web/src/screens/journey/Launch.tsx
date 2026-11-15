@@ -4,15 +4,18 @@ import { useCallback, useEffect, useState } from 'react'
 import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
 import { Icon, type IconName } from '../../game/icons'
-import { RingParticles, Saturn, SolarSystemMap, SpaceBackdrop } from '../../art/worlds'
+import { RingParticles, SolarSystemMap, SpaceBackdrop } from '../../art/worlds'
 import { LaunchRocket, Spaceship, type LaunchPhase } from '../../art/ships'
 import type { MissionState } from '../../engine/types'
 import { Stage, thrustFor, tripNumbers, usePrefersReducedMotion, useProgress, type TripNumbers } from './cine'
+import { World, RingsOnly, useDestination } from '../../game/World'
 
 type Scene = 'liftoff' | 'transit' | 'insertion'
 const TRANSIT_MS = 9800
 const INSERTION_MS = 5000
 const SATURN_AU = 9.5
+const MARS_AU = 1.52
+const destAu = (d: 'saturn' | 'mars') => (d === 'mars' ? MARS_AU : SATURN_AU)
 const ease = (x: number) => x * x * (3 - 2 * x)
 
 function Chip({ icon, label, value, max, unit = '', tone }: { icon: IconName; label: string; value: number; max: number; unit?: string; tone: string }) {
@@ -71,7 +74,8 @@ function Transit({ trip, onDone, still }: { trip: TripNumbers; onDone: () => voi
   useEffect(() => { if (!still && p >= 1) onDone() }, [p, still, onDone])
   const e = ease(p)
   const fact = Math.min(2, Math.floor(p * 3))
-  const au = 1 + (SATURN_AU - 1) * e
+  const dest = useDestination()
+  const au = 1 + (destAu(dest) - 1) * e
   return (
     <div className="jy-la-transit">
       <header className="jy-la-head">
@@ -82,6 +86,7 @@ function Transit({ trip, onDone, still }: { trip: TripNumbers; onDone: () => voi
         <SolarSystemMap
           routes={[{ id: 'balanced', highlighted: true, color: '#38D9D0' }]}
           progress={e}
+          destination={dest}
           labels={{ sun: t('jy.map.sun'), earth: t('jy.map.earth'), saturn: t('jy.map.saturn') }}
           note={t('jy.map.note')}
           width="100%"
@@ -106,14 +111,15 @@ function Transit({ trip, onDone, still }: { trip: TripNumbers; onDone: () => voi
 
 function Insertion({ mission, trip, onDone }: { mission: MissionState; trip: TripNumbers; onDone: () => void }) {
   const t = useT()
+  const dau = destAu(useDestination())
   const p = useProgress(INSERTION_MS)
   useEffect(() => { if (p >= 1) onDone() }, [p, onDone])
   const burn = Math.max(0, Math.min(1, (p - 0.4) / 0.48))
   const burning = burn > 0 && burn < 1
   return (
     <div className={`jy-la-soi ${burning ? 'is-burning' : ''}`}>
-      <div className="jy-la-soi__saturn"><Saturn size="100%" tilt={16} roll={-12} /></div>
-      <div className="jy-la-soi__rings"><RingParticles density={1.2} speed={1.6} direction={-6} /></div>
+      <div className="jy-la-soi__saturn"><World size="100%" tilt={16} roll={-12} /></div>
+      <RingsOnly><div className="jy-la-soi__rings"><RingParticles density={1.2} speed={1.6} direction={-6} /></div></RingsOnly>
       <div className="jy-la-soi__path">
         <div className="jy-la-soi__flip">
           <Spaceship config={mission.config} thrust={burning ? thrustFor(mission.config) : 'off'} width="100%" title={t('jy.ship.aria')} />
@@ -123,7 +129,7 @@ function Insertion({ mission, trip, onDone }: { mission: MissionState; trip: Tri
         <h2 className="jy-la-kicker jy-la-kicker--hot">{t('jy.la.soi')}</h2>
         <MonthCounter month={trip.months} total={trip.months} />
       </header>
-      <Counters trip={trip} maneuver={trip.depManeuver - trip.outbound - trip.insertion * burn} vital={trip.arrVital} sunlight={100 / (SATURN_AU * SATURN_AU)} />
+      <Counters trip={trip} maneuver={trip.depManeuver - trip.outbound - trip.insertion * burn} vital={trip.arrVital} sunlight={100 / (dau * dau)} />
       <div className="jy-fact jy-fact--soi panel"><p>{t('jy.la.soiSub', { insertion: trip.insertion })}</p></div>
     </div>
   )

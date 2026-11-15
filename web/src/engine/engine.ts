@@ -12,6 +12,7 @@ import {
   SCORE,
   SPARES_START,
 } from './data.ts'
+import { getDestination, hasGravityAssist } from './destination.ts'
 import type {
   ActionResult,
   Change,
@@ -304,6 +305,7 @@ export function createMission(config: ShipConfig, difficulty: Difficulty): Missi
     flags: { impactPrompt: false, shelterUsed: false, sparesHoarded: 0 },
     titanAssist: false,
     route: null,
+    destination: getDestination(),
     reentry: { done: [], corridor: null, outcome: 'pending' },
   }
   recalc(s)
@@ -996,6 +998,7 @@ export function finishSaturn(state: MissionState): ActionResult & FinishReport {
 // ---------------------------------------------------------------- Level 3: return
 
 export function titanAvailability(state: MissionState): { available: boolean; reasonKey?: string; params: Params } {
+  if (!hasGravityAssist()) return { available: false, reasonKey: 'engine.titan.none', params: {} }
   if (state.systems.navigation === 'failed') return { available: false, reasonKey: 'engine.titan.noNavigation', params: {} }
   if (state.systems.propulsion === 'failed') return { available: false, reasonKey: 'engine.titan.noPropulsion', params: {} }
   if (state.maneuver < PARAMS.titanPrep) return { available: false, reasonKey: 'engine.titan.noManeuver', params: { maneuver: state.maneuver, prep: PARAMS.titanPrep } }

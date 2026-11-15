@@ -308,6 +308,14 @@ const ICONS = {
       <path d="M14 13.5c1.8-1 4.2-.4 4.6 1.3s-1 3.6-2.8 3.8-2-1.2-2.6-2.4c-.5-1 .1-2.1.8-2.7z" fill={G} strokeWidth="1.8" />
     </>
   )],
+  mars: ['red', c => (
+    <>
+      <circle cx="12" cy="12" r="9.5" fill={c} />
+      <path d="M7.4 5.2c2.6-1.4 6.6-1.4 9.2 0-2.8 1.3-6.4 1.3-9.2 0z" fill={W} strokeWidth="1.6" />
+      <path d="M5 12.5c2.2-.8 4.4.4 6.8-.2s3.8-1.6 6.6-.6" fill="none" strokeWidth="1.8" />
+      <circle cx="15.2" cy="16" r="1.6" fill={O} strokeWidth="1.5" />
+    </>
+  )],
   'gravity-assist': ['teal', c => (
     <>
       <path d="M3 20.5C6 16 5.5 6 13 6c4.8 0 7 3.5 7 7.5" stroke={L} strokeWidth="2" strokeDasharray="2.4 3" />

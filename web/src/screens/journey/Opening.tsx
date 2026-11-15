@@ -2,10 +2,11 @@
 import { useCallback, useEffect } from 'react'
 import { useT } from '../../i18n'
 import { game, useGame } from '../../game/store'
-import { Earth, Saturn, SpaceBackdrop } from '../../art/worlds'
+import { Earth, SpaceBackdrop } from '../../art/worlds'
 import { Spaceship } from '../../art/ships'
 import { PARAMS } from '../../engine/data'
 import { DEFAULT_SHIP, Stage, thrustFor, useBeats, usePrefersReducedMotion } from './cine'
+import { World } from '../../game/World'
 
 // beats: 0 Earth · 1 pull-away warp · 2 slowing at Saturn · 3 ship + title · 4 done
 const BEATS = [1000, 4100, 1500, 5200] as const
@@ -28,7 +29,7 @@ export function Opening() {
     <Stage className="jy-op" onSkip={end} skipLabel={reduced ? t('common.continue') : undefined}>
       <SpaceBackdrop warp={reduced ? 0 : WARP[beat]} />
       <div className="jy-op-earth"><Earth size="100%" /></div>
-      <div className="jy-op-saturn"><Saturn size="100%" tilt={20} roll={-16} /></div>
+      <div className="jy-op-saturn"><World size="100%" tilt={20} roll={-16} /></div>
       <div className="jy-op-ship">
         <Spaceship config={config} thrust={thrustFor(config)} width="100%" title={t('jy.ship.aria')} />
       </div>

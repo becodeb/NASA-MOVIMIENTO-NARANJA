@@ -3,6 +3,7 @@ import './worlds.css'
 import { INK, clamp, cx, r1, rng, useMotion, useSvgId, type Size } from './util'
 
 export type RouteId = 'fast' | 'balanced' | 'slow'
+export type MapDestination = 'saturn' | 'mars'
 
 export interface MapRoute {
   id: RouteId
@@ -21,8 +22,16 @@ export interface SolarSystemMapProps {
   activeRoute?: RouteId
   /** 0..1 position of the ship along the active route. Omit (or null) to hide the ship. */
   progress?: number | null
-  /** Show Titan next to Saturn with a fly-by swing arc. */
+  /** Show Titan next to Saturn with a fly-by swing arc. Ignored when destination is 'mars'. */
   showTitanFlyby?: boolean
+  /**
+   * Where the routes lead. 'saturn' (default) is the original map. 'mars' zooms into the inner solar system:
+   * Mars sits on an orbit just outside Earth's (true 1 : 1.52 ratio), routes go Earth ↔ Mars, no Titan.
+   * In 'mars' mode the planet name is still read from `labels.saturn`.
+   */
+  destination?: MapDestination
+  /** Return leg: the ship travels destination → Earth (progress 0 = at the destination, 1 = back at Earth). */
+  returning?: boolean
   /** Small caption in the corner, e.g. "No está a escala". */
   note?: string
   labels?: Partial<Record<'sun' | 'earth' | 'saturn' | 'titan', string>>
@@ -55,7 +64,48 @@ const polar = (r: number, thDeg: number): Pt => [CX + r * Math.cos(thDeg * DEG),
 const EARTH = polar(R_EARTH, TH_EARTH)
 const SATURN = polar(R_SATURN, TH_SATURN)
 
-function routePoints(id: RouteId): Pt[] {
+/** Orbit geometry for one destination. */
+interface Geo {
+  rEarth: number
+  rDest: number
+  thEarth: number
+  thDest: number
+  earth: Pt
+  dest: Pt
+  /** How far the 'fast' chord bows away from the Sun. */
+  bow: number
+  /** Asteroid belt: inner radius and width. */
+  belt: [number, number]
+}
+
+const GEO_SATURN: Geo = {
+  rEarth: R_EARTH,
+  rDest: R_SATURN,
+  thEarth: TH_EARTH,
+  thDest: TH_SATURN,
+  earth: EARTH,
+  dest: SATURN,
+  bow: 20,
+  belt: [168, 30],
+}
+
+// Inner solar system, zoomed in: Earth 1 AU = 165 units, Mars 1.52 AU = 250 units, main belt just beyond.
+const R_EARTH_M = 165
+const R_MARS = 250
+const TH_MARS = 385 // = 25°, 135° ahead of Earth's departure point
+const GEO_MARS: Geo = {
+  rEarth: R_EARTH_M,
+  rDest: R_MARS,
+  thEarth: TH_EARTH,
+  thDest: TH_MARS,
+  earth: polar(R_EARTH_M, TH_EARTH),
+  dest: polar(R_MARS, TH_MARS),
+  bow: 40,
+  belt: [326, 30],
+}
+
+function routePoints(id: RouteId, g: Geo): Pt[] {
+  const { earth: EARTH, dest: SATURN, rEarth: R_EARTH, rDest: R_SATURN, thEarth: TH_EARTH, thDest: TH_SATURN } = g
   const n = id === 'slow' ? 160 : 64
   const pts: Pt[] = []
   if (id === 'fast') {
@@ -65,7 +115,7 @@ function routePoints(id: RouteId): Pt[] {
     const dx = SATURN[0] - EARTH[0]
     const dy = SATURN[1] - EARTH[1]
     const len = Math.hypot(dx, dy)
-    const c: Pt = [mx + (-dy / len) * 20, my + (dx / len) * 20]
+    const c: Pt = [mx + (-dy / len) * g.bow, my + (dx / len) * g.bow]
     for (let i = 0; i <= n; i++) {
       const t = i / n
       const u = 1 - t
@@ -90,8 +140,8 @@ interface Built {
   total: number
 }
 
-function build(id: RouteId): Built {
-  const pts = routePoints(id)
+function build(id: RouteId, g: Geo): Built {
+  const pts = routePoints(id, g)
   const cum = [0]
   for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]))
   return {
@@ -116,7 +166,8 @@ function pointAt(b: Built, t: number): { x: number; y: number; angle: number } {
   return { x: x0 + (x1 - x0) * f, y: y0 + (y1 - y0) * f, angle: Math.atan2(c[1] - a[1], c[0] - a[0]) / DEG }
 }
 
-const BUILT: Record<RouteId, Built> = { fast: build('fast'), balanced: build('balanced'), slow: build('slow') }
+const BUILT: Record<RouteId, Built> = { fast: build('fast', GEO_SATURN), balanced: build('balanced', GEO_SATURN), slow: build('slow', GEO_SATURN) }
+const BUILT_MARS: Record<RouteId, Built> = { fast: build('fast', GEO_MARS), balanced: build('balanced', GEO_MARS), slow: build('slow', GEO_MARS) }
 
 function starPath(n: number, rOut: number, rIn: number): string {
   let d = ''
@@ -133,6 +184,8 @@ export function SolarSystemMap({
   activeRoute,
   progress = null,
   showTitanFlyby = false,
+  destination = 'saturn',
+  returning = false,
   note,
   labels,
   width = '100%',
@@ -143,20 +196,24 @@ export function SolarSystemMap({
 }: SolarSystemMapProps) {
   const motion = useMotion(animate)
   const id = useSvgId('sw-map')
-  const L = { sun: 'Sol', earth: 'Tierra', saturn: 'Saturno', titan: 'Titán', ...labels }
+  const mars = destination === 'mars'
+  const geo = mars ? GEO_MARS : GEO_SATURN
+  const built = mars ? BUILT_MARS : BUILT
+  const L = { sun: 'Sol', earth: 'Tierra', saturn: mars ? 'Marte' : 'Saturno', titan: 'Titán', ...labels }
   const anyHi = routes.some((r) => r.highlighted)
   const activeId = activeRoute ?? routes.find((r) => r.highlighted)?.id ?? routes[0]?.id
   const active = routes.find((r) => r.id === activeId)
   const p = progress == null ? null : clamp(progress, 0, 1)
-  const ship = p != null && activeId ? pointAt(BUILT[activeId], p) : null
+  const shipFwd = p != null && activeId ? pointAt(built[activeId], returning ? 1 - p : p) : null
+  const ship = shipFwd && returning ? { ...shipFwd, angle: shipFwd.angle + 180 } : shipFwd
 
   const belt = useMemo(() => {
     const rand = rng(8)
     return Array.from({ length: 70 }, () => {
-      const [x, y] = polar(168 + rand() * 30, rand() * 360)
+      const [x, y] = polar(geo.belt[0] + rand() * geo.belt[1], rand() * 360)
       return { x: r1(x), y: r1(y), r: 0.8 + rand() * 1.5, o: 0.12 + rand() * 0.22 }
     })
-  }, [])
+  }, [geo])
 
   // draw order: dim routes first, highlighted last
   const ordered = [...routes].sort((a, b) => Number(!!a.highlighted) - Number(!!b.highlighted))
@@ -181,8 +238,8 @@ export function SolarSystemMap({
 
       {/* orbits */}
       <g fill="none" strokeLinecap="round">
-        <ellipse cx={CX} cy={CY} rx={R_SATURN} ry={R_SATURN * SQUASH} stroke="#FF8C32" strokeOpacity={0.5} strokeWidth={2.5} strokeDasharray="2 10" />
-        <ellipse cx={CX} cy={CY} rx={R_EARTH} ry={R_EARTH * SQUASH} stroke="#38D9D0" strokeOpacity={0.6} strokeWidth={2.5} strokeDasharray="2 8" />
+        <ellipse cx={CX} cy={CY} rx={geo.rDest} ry={geo.rDest * SQUASH} stroke={mars ? '#F0603F' : '#FF8C32'} strokeOpacity={mars ? 0.65 : 0.5} strokeWidth={2.5} strokeDasharray="2 10" />
+        <ellipse cx={CX} cy={CY} rx={geo.rEarth} ry={geo.rEarth * SQUASH} stroke="#38D9D0" strokeOpacity={0.6} strokeWidth={2.5} strokeDasharray="2 8" />
       </g>
       {/* asteroid belt (decorative) */}
       <g fill="#8896B3">
@@ -201,7 +258,7 @@ export function SolarSystemMap({
 
       {/* routes */}
       {ordered.map((r) => {
-        const b = BUILT[r.id]
+        const b = built[r.id]
         const color = r.color ?? DEFAULT_COLORS[r.id]
         const hi = !!r.highlighted
         const wd = hi ? 6 : 4
@@ -219,7 +276,7 @@ export function SolarSystemMap({
               </>
             )}
             {isActive && p != null && p > 0 && (
-              <path d={b.d} pathLength={1} fill="none" stroke={color} strokeWidth={wd} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${p} 1.2`} />
+              <path d={b.d} pathLength={1} fill="none" stroke={color} strokeWidth={wd} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={returning ? `0 ${1 - p} ${p} 1.2` : `${p} 1.2`} />
             )}
             {r.label && (
               <text className="sw-map-label sw-map-label--route" x={r1(mid.x)} y={r1(mid.y - 14)} textAnchor="middle" fill={color}>
@@ -231,7 +288,7 @@ export function SolarSystemMap({
       })}
 
       {/* Earth */}
-      <g transform={`translate(${r1(EARTH[0])} ${r1(EARTH[1])})`}>
+      <g transform={`translate(${r1(geo.earth[0])} ${r1(geo.earth[1])})`}>
         <circle r={21} fill="#38D9D0" fillOpacity={0.22} />
         <circle r={14} fill="#2F7FE6" stroke={INK} strokeWidth={3.5} />
         <path d="M-9,-6 q4,-5 9,-3 q-1,5 -5,6 q1,4 -2,8 q-5,-4 -2,-11z M4,2 q5,-2 7,2 q-2,5 -6,5 z" fill="#58C46B" stroke={INK} strokeWidth={1.2} strokeLinejoin="round" />
@@ -240,7 +297,23 @@ export function SolarSystemMap({
         </text>
       </g>
 
+      {/* Mars (destination = 'mars') */}
+      {mars && (
+        <g transform={`translate(${r1(geo.dest[0])} ${r1(geo.dest[1])})`}>
+          <circle className="sw-map-ping" r={22} fill="none" stroke="#FFD447" strokeWidth={3} />
+          <circle r={20} fill="#F04452" fillOpacity={0.22} />
+          <circle r={13} fill="#D9573B" stroke={INK} strokeWidth={3.5} />
+          <path d="M-2,-3 q5,-5 8,1 q3,4 -1,6 q-4,-1 -5,-4 q-5,1 -8,4 q1,-5 6,-7z" fill="#8A3327" />
+          <path d="M-7.6,-8 A11.2,11.2 0 0 1 7.6,-8 Q4,-5.6 0,-6.6 Q-4,-5.6 -7.6,-8 Z" fill="#FFFFFF" />
+          <path d="M-8,5 a11,11 0 0 0 4,5" fill="none" stroke="#F6A57C" strokeWidth={2} strokeLinecap="round" />
+          <text className="sw-map-label" x={0} y={-28} textAnchor="middle">
+            {L.saturn}
+          </text>
+        </g>
+      )}
+
       {/* Saturn (+ Titan fly-by) */}
+      {!mars && (
       <g transform={`translate(${r1(SATURN[0])} ${r1(SATURN[1])})`}>
         <circle className="sw-map-ping" r={26} fill="none" stroke="#FFD447" strokeWidth={3} />
         {showTitanFlyby && (
@@ -271,6 +344,7 @@ export function SolarSystemMap({
           {L.saturn}
         </text>
       </g>
+      )}
 
       <text className="sw-map-label" x={CX} y={CY - 44} textAnchor="middle">
         {L.sun}

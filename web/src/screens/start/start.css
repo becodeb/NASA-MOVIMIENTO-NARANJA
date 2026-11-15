@@ -72,6 +72,9 @@
 .st-diff__opt:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 .st-diff__opt[aria-pressed='true'] { border-style: solid; border-color: var(--ink); box-shadow: var(--sh-sm); animation: st-bounce .4s; }
 .st-diff__opt[aria-pressed='true'].st-diff__opt--easy { background: var(--green); }
+.st-diff__opt[aria-pressed='true'].st-dest__opt--saturn { background: var(--yellow); }
+.st-diff__opt[aria-pressed='true'].st-dest__opt--mars { background: var(--orange); }
+.st-dest { margin-bottom: 10px; }
 .st-diff__opt[aria-pressed='true'].st-diff__opt--hard { background: var(--red); color: var(--white); text-shadow: 0 2px 0 var(--ink); }
 @keyframes st-bounce { 40% { transform: scale(1.1); } 70% { transform: scale(.96); } }
 .st-diff__list { list-style: none; margin: 10px 2px 2px; padding: 0; text-align: left; font-weight: 800; font-size: 14px; display: grid; }

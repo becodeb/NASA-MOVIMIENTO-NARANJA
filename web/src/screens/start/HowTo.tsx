@@ -5,6 +5,7 @@ import { Icon, type IconName } from '../../game/icons'
 import { SpaceBackdrop } from '../../art/worlds'
 import { Astronaut } from '../../avatar'
 import { Bubble, hasMission, introReturn, resumeScreen } from './common'
+import { useDestination } from '../../game/World'
 
 const GL: [string, IconName][] = [
   ['delta', 'maneuver'], ['power', 'power'], ['battery', 'battery'], ['eclss', 'life-support'], ['redundancy', 'redundancy'],
@@ -13,6 +14,7 @@ const GL: [string, IconName][] = [
 const STOPS: IconName[] = ['earth', 'saturn', 'return-home']
 
 export function HowTo() {
+  const dest = useDestination()
   const t = useT()
   const { avatar, mission, difficulty } = useGame()
   return (
@@ -33,7 +35,7 @@ export function HowTo() {
           <svg className="st-plan__arc" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden focusable="false"><path d="M0 60 Q150 -20 300 60" /></svg>
           {[1, 2, 3].map(n => (
             <li key={n} className="st-plan__stop" style={{ ['--k' as string]: n }}>
-              <span className="st-plan__node"><Icon name={STOPS[n - 1]} size={30} /></span>
+              <span className="st-plan__node"><Icon name={n === 2 && dest === 'mars' ? 'mars' : STOPS[n - 1]} size={30} /></span>
               <h3>{t(`st.howto.s${n}.t`)}</h3>
               <p>{t(`st.howto.s${n}.d`)}</p>
             </li>
