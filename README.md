@@ -1,40 +1,41 @@
-# Space Odyssey: Mission Saturn
+# NASA - MOVIMIENTO NARANJA
 
-An educational browser game for NASA Space Apps Challenge 2026. You design a ship, keep four astronauts alive at Saturn, and bring them home. It is made for students aged 15 to 18.
+**Space Odyssey: Mission Saturn** is team Movimiento Naranja's entry to the NASA Space Apps Challenge 2026, challenge **Space Mission Design Game**.
 
-- **Play:** https://nasa.becode.com.ar
-- **30-second demo (English captions):** https://nasa.becode.com.ar/media/space-odyssey-trailer.mp4
+It is a free browser game for students aged 15 to 18. You design a ship under a fixed budget and mass limit, keep four astronauts alive through six months at Saturn, and bring them home. The ship you build, the damage you take and the supplies you spend carry over from level to level, so every decision has consequences.
 
-## What it is
+| | |
+|---|---|
+| Play the game | https://nasa.becode.com.ar |
+| 30-second demo (English captions) | https://nasa.becode.com.ar/media/space-odyssey-trailer.mp4 |
+| Presentation (7 slides, PDF) | [presentation/Space_Odyssey_Movimiento_Naranja.pdf](presentation/Space_Odyssey_Movimiento_Naranja.pdf) |
 
-The game is one persistent mission in three levels:
+## What is in this repository
 
-1. **Design.** Pick the structure, propulsion, power, life support and communications under a budget of 105 credits and a launch mass limit of 130.
-2. **Saturn.** Survive six months: six technical emergencies and four science investigations.
-3. **Return.** Choose a route, optionally use a Titan gravity assist, and fly the capsule re-entry.
+| Folder | Contents |
+|---|---|
+| [`process/`](process/) | How we worked: the team's original design material, from first ideas to the final game rules. |
+| [`presentation/`](presentation/) | The team's 7-slide presentation (PDF). |
+| [`web/`](web/) | The game's source code: TypeScript, React and Vite, a rules engine with automated tests, and a small Node server. See [`web/README.md`](web/README.md). |
 
-Nothing resets between levels. Every decision shows its consequence and a short explanation of why. The game runs in English, Spanish, Brazilian Portuguese and French, with Easy and Hard modes.
+## NASA data and resources used
 
-All numbers are simplified, normalized game units, not real mission data. The crewed Saturn mission is hypothetical. The science notes rely on NASA sources, listed in the submission.
+| Resource | Where it is used in the game |
+|---|---|
+| [NASA Program/Project Life Cycle](https://www.nasa.gov/reference/3-0-nasa-program-project-life-cycle/) | The life cycle, Pre-Phase A to Phase F, is applied in simplified form across the three levels. |
+| [Fundamentals of Systems Engineering](https://www.nasa.gov/reference/2-0-fundamentals-of-systems-engineering/) | Trade-offs, margins and reserves in the Engineering Report. |
+| [Saturn Facts](https://science.nasa.gov/saturn/facts/) | Saturn is about 9.5 AU from the Sun and gets about 1.1% of Earth's sunlight, which sets the power check. The atmosphere, rings and magnetosphere are science investigations. |
+| [Cassini Quick Facts](https://science.nasa.gov/mission/cassini/quick-facts/) | The 67 to 85 minute one-way light time sets the communications delay. |
+| [Cassini Gravity Assists](https://science.nasa.gov/mission/cassini/gravity-assists/) | The Titan gravity-assist option on the way home. |
+| [ECLSS](https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/) | The life-support options and the CO2 emergency. |
+| [Radioisotope Thermoelectric Generators](https://science.nasa.gov/planetary-science/programs/radioisotope-power-systems/power-radioisotope-thermoelectric-generators/) | The MMRTG, at about 110 W, is the reference for the nuclear power option. |
+| [Titan](https://science.nasa.gov/saturn/moons/titan/) and [Enceladus](https://science.nasa.gov/saturn/moons/enceladus/) | The moons investigation. |
+| [Deep Space Network](https://www.nasa.gov/communicating-with-missions/dsn/) | The mission's ground segment and its communications. |
 
-## Use of AI (Super Intelligence) disclosure
+Partner agency resource: [ESA's Cassini-Huygens mission](https://www.esa.int/Science_Exploration/Space_Science/Cassini-Huygens), background for Titan.
 
-- **Designed by the team:** the concept, the mission rules and every number, the science content and the educational goals. The team also playtested and accepted the result.
-- **Written with AI coding assistance (Anthropic Claude models):** the source code in this repository. That includes the rules engine, the screens, all art and animation (drawn with SVG, Canvas and CSS), the synthesized sound and music, the translations, and the trailer.
-- **Assets:** the game contains no image, audio or video files made by generative-image or generative-audio tools. Everything you see and hear is rendered by this code at runtime.
-- **The trailer:** a screen capture of the game. It carries a visible "Made with AI-assisted code (Claude)" mark and an MP4 metadata note.
+All numbers in the game are simplified, normalized game units for teaching. The crewed Saturn mission is hypothetical.
 
-## Develop
+## Use of AI
 
-```bash
-npm install
-npm run dev      # game at http://localhost:5173
-npm test         # rules-engine tests (Vitest)
-npm run build
-```
-
-Production runs `server/server.mjs` (Node 22). It serves `dist/` and the team-feedback API. See the `Dockerfile`.
-
-## Tech
-
-TypeScript, React 19, Vite, Vitest, the Web Audio API, and Google Fonts (Lilita One and Nunito, under the SIL Open Font License).
+The team designed the concept, the rules, every number and the science content. The game code, including its art, sound and music, which are generated by the code, was written with AI coding assistance (Anthropic Claude). The team reviewed and playtested it. See [`web/README.md`](web/README.md) for details.

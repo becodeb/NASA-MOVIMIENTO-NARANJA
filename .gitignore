@@ -3,5 +3,5 @@ dist
 *.log
 .env
 .env.*
-/video/out
+/web/video/out
 /docs
