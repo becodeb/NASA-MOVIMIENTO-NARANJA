@@ -10,7 +10,7 @@ export interface Caption {
 export const TRAILER_SECONDS = 30
 
 export const CAPTIONS: Caption[] = [
-  { start: 0, end: 3, text: 'The year is 2061. Destination: SATURN.', hi: ['SATURN.'] },
+  { start: 0, end: 3, text: 'The year is 2061. Destination: SATURN or MARS.', hi: ['SATURN', 'MARS.'] },
   { start: 3, end: 4.5, text: 'You are the Commander.', hi: ['Commander.'] },
   { start: 4.5, end: 9, text: 'Design your ship. Every part costs budget, mass and power.', hi: ['budget,', 'mass', 'power.'] },
   { start: 9, end: 11.5, text: 'Launch!', hi: ['Launch!'] },

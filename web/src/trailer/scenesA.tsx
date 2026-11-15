@@ -6,6 +6,7 @@ import { designReport } from '../engine/engine'
 import { At, Check, COMMANDER, MAstro, MEarth, MSaturn, MShip, Ring } from './art'
 import { appear, backOut, easeIn, easeInOut, easeOut, lerp, pop, prog, punch, slam } from './lib'
 import type { SceneProps } from './Trailer'
+import { Mars } from '../art/worlds'
 
 /* ------------------------------------------------------------------ */
 /* 1 · OPEN                                                            */
@@ -36,8 +37,14 @@ export function OpenScene({ t }: SceneProps) {
           <MSaturn size={SATURN_REST.size} tilt={20} roll={-16} />
         </div>
       )}
-      <At x={110} y={90} s={pop(t, 2.45)} origin="left center" className="tr-tag tr-tag--yellow">SATURN</At>
-      <At x={110} y={178} s={pop(t, 2.6)} origin="left center" className="tr-tag tr-tag--small">1.4 BILLION KM FROM THE SUN</At>
+      {t > 1.7 && (
+        <div className="tr-at" style={{ left: 330 - 170, top: 800 - 170, transform: `scale(${pop(t, 1.75, 0.35)})` }}>
+          <Mars size={340} fit="tight" tilt={18} roll={-10} glow />
+        </div>
+      )}
+      <At x={110} y={90} s={pop(t, 1.85)} origin="left center" className="tr-tag tr-tag--yellow">SATURN</At>
+      <At x={110} y={178} s={pop(t, 2.0)} origin="left center" className="tr-tag tr-tag--yellow tr-tag--mars">OR MARS</At>
+      <At x={110} y={262} s={pop(t, 2.15)} origin="left center" className="tr-tag tr-tag--small">PICK YOUR MISSION</At>
     </>
   )
 }
@@ -63,7 +70,7 @@ export function Logo({ t, at = 0, scale = 1 }: { t: number; at?: number; scale?:
   return (
     <div className="tr-logo" style={{ transform: `scale(${scale})` }}>
       <div className="tr-logo__top" style={{ opacity: appear(t, at), transform: `scale(${slam(t, at, 0.17, 3.4)}) rotate(-3deg)` }}>SPACE ODYSSEY</div>
-      <div className="tr-logo__sub" style={{ transform: `scale(${pop(t, at + 0.2, 0.3)}) rotate(-3deg)` }}>MISSION SATURN</div>
+      <div className="tr-logo__sub" style={{ transform: `scale(${pop(t, at + 0.2, 0.3)}) rotate(-3deg)` }}>SATURN · MARS</div>
     </div>
   )
 }

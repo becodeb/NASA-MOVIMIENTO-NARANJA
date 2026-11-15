@@ -34,6 +34,7 @@
   border: 5px solid var(--ink); border-radius: 18px; box-shadow: 0 7px 0 var(--ink); letter-spacing: 1px;
 }
 .tr-tag--yellow { background: #ffd447; font-size: 54px; }
+.tr-tag--mars { background: #ff8c32; }
 .tr-tag--orange { background: #ff8c32; }
 .tr-tag--small { background: #f5f7ff; font-size: 30px; }
 .tr-tag--center { text-align: center; }
